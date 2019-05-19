@@ -1,0 +1,23 @@
+{
+  "name": "node-beacon-tracker",
+  "version": "1.0.0",
+  "description": "Triangulation node server for tracking moving targets",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha tests"
+  },
+  "author": "violentpotato",
+  "license": "ISC",
+  "dependencies": {
+    "bluebird": "^3.5.4",
+    "noble": "^1.9.1",
+    "node-trilateration": "^1.0.0"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "mocha": "^6.1.4",
+    "proxyquire": "^2.1.0",
+    "rewire": "^4.0.1",
+    "sinon": "^7.3.2"
+  }
+}
