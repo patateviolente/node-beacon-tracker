@@ -4,6 +4,7 @@
   "description": "Triangulation node server for tracking moving targets",
   "main": "index.js",
   "scripts": {
+    "start": "node index",
     "test": "mocha tests"
   },
   "author": "violentpotato",

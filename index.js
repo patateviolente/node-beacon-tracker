@@ -3,6 +3,7 @@ const http = require('http');
 const router = require('./src/router');
 const bluetoothServer = require('./src/bluetoothListener');
 const roles = require('./src/role');
+const web = require('./src/web');
 
 const config = require('./config');
 
@@ -13,3 +14,6 @@ console.log(`Listening on ${config.port} as ${roles.whoami} (${roles.role})`);
 
 // Bluetooth listener
 bluetoothServer.init();
+
+// Web dashboard
+web.initServer();

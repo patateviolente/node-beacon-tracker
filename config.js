@@ -26,7 +26,14 @@ const config = {
   runawayBounds: [
     [[-100, -100], [-1, 8]],
     [[9, -100], [100, 8]]
-  ]
+  ],
+  map: {
+    src: 'img/maps/map.jpg',
+    xi: -22,
+    xf: 45.5,
+    yi: -6,
+    yf: 29.3,
+  }
 };
 
 config.beacons = config.beacons.map(mac => utils.standardizeMac(mac));
