@@ -3,16 +3,16 @@ const http = require('http');
 const config = require('../config');
 
 module.exports.initServer = function() {
-  const server = http.createServer((request, response) => {
-    console.log(request.url);
-    response.end('Hello Node.js Server!');
-  });
+  if (!config.dashboard.enable) {
+    return false;
+  }
 
-  server.listen(port, (err) => {
-    if (err) {
-      return console.log('something bad happened', err)
-    }
-
-    console.log(`server is listening on ${port}`)
-  })
+  http.createServer(routeWeb)
+    .listen(config.dashboard.port);
+  console.log(`dashboard is listening on ${config.dashboard.port}`)
 };
+
+function routeWeb(req, res) {
+  console.log(req.url);
+  res.end('Hello Node.js Server!');
+}

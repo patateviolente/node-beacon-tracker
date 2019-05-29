@@ -11,45 +11,37 @@ module.exports = function(req, res) {
   return Promise.try(() => {
     const url = req.url;
     if (url.startsWith('/notify/') && role.amIMaster) {
-      return notify(req);
-    }
-    if (url === '/config') {
-      return getConfig(req, res);
+      return notify(req)
+        .tap(output => console.log(`[200] ${req.url} ${output}`))
+        .then(output => res.end(JSON.stringify(output)));
     }
 
-    return notFound(req, res);
+    throw new HttpError(404, `Route ${req.url} unknown`);
   })
-    .then((json) => {
-      return res ? res.end(json) : json;
-    })
+    .then(json => (res && res.end(JSON.stringify(json)) || json))
     .catch((e) => {
-      console.log(e);
+      const code = e.code || 500;
+      console.error(`[${code}] ${req.url} ${e.message}`);
       if (res) {
-        res.writeHead(e.code || 500, { 'content-type': 'application/json' });
+        res.writeHead(code, { 'content-type': 'application/json' });
 
-        return res.end({ error: e.message });
+        return res.end(JSON.stringify({ error: e.message }));
       }
     });
 };
 
 function notify(req) {
-  const notifyUrl = req.url.replace(/^\/notify\//, '');
-  const params = notifyUrl.split('/');
+  return Promise.try(() => {
+    const notifyUrl = req.url.replace(/^\/notify\//, '');
+    const params = notifyUrl.split('/');
 
-  // Transmitted /notify/apName/mac/rssi from slave
-  if (Object.keys(config.accessPoints).includes(params[0])
-    && utils.isMac(params[1])
-    && utils.isNumeric(params[2])) {
-    return receiver.slaveReport(params[0], params[1], parseFloat(params[2]));
-  }
+    // Transmitted /notify/apName/mac/rssi from slave
+    if (Object.keys(config.accessPoints).includes(params[0])
+      && utils.isMac(params[1])
+      && utils.isNumeric(params[2])) {
+      return receiver.slaveReport(params[0], params[1], parseFloat(params[2]));
+    }
 
-  throw new HttpError(400, `Route ${req.url} invalid`);
-}
-
-function getConfig() {
-  return config;
-}
-
-function notFound(req) {
-  throw new HttpError(404, `Route ${req.url} unknown`);
+    throw new HttpError(400, `Route ${req.url} invalid`);
+  });
 }
