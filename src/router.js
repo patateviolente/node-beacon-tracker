@@ -3,6 +3,7 @@ const Promise = require('bluebird');
 const config = require('../config');
 const role = require('../src/role');
 const utils = require('../lib/utils');
+const logger = require('../lib/logger');
 const receiver = require('./aggregator');
 
 const HttpError = require('../lib/errors').HttpError;
@@ -12,7 +13,7 @@ module.exports = function(req, res) {
     const url = req.url;
     if (url.startsWith('/notify/') && role.amIMaster) {
       return notify(req)
-        .tap(output => console.log(`[200] ${req.url} ${output}`))
+        .tap(output => logger.log(`[200] ${req.url} ${output}`, logger.VERBOSE))
         .then(output => res.end(JSON.stringify(output)));
     }
 
@@ -21,7 +22,7 @@ module.exports = function(req, res) {
     .then(json => (res && res.end(JSON.stringify(json)) || json))
     .catch((e) => {
       const code = e.code || 500;
-      console.error(`[${code}] ${req.url} ${e.message}`);
+      logger.error(`[${code}] ${req.url} ${e.message}`);
       if (res) {
         res.writeHead(code, { 'content-type': 'application/json' });
 
