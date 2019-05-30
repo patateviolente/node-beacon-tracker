@@ -16,8 +16,6 @@ module.exports.init = function() {
   scanner.onSignal = (peripheral) => {
     const standardizedMac = utils.standardizeMac(peripheral.uuid);
     if (config.beacons.includes(standardizedMac)) {
-      logger.log(`Beacon found! Call master ${masterUrl}`, logger.DEBUG);
-
       return informMaster(standardizedMac, peripheral.rssi);
     }
     logger.log(`Non registered peripheral ${standardizedMac} ${peripheral.rssi}`, logger.VERBOSE);
@@ -31,6 +29,7 @@ module.exports.init = function() {
 
 function informMaster(mac, rssi) {
   const masterUrl = `http://${masterIp}:${config.port}/notify/${role.whoami}/${mac}/${rssi}`;
+  logger.log(`Beacon found - call master ${masterUrl}`, logger.DEBUG);
 
   return utils.getHttp(masterUrl);
 }

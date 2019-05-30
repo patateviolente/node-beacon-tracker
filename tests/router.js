@@ -14,13 +14,6 @@ describe('router', () => {
     sinon.assert.calledOnce(notFoundSpy);
   });
 
-  it('/config should return config', async() => {
-    const getConfigSpy = sinon.spy(() => {});
-    router.__set__('getConfig', getConfigSpy);
-    await router({ url: '/config' });
-    sinon.assert.calledOnce(getConfigSpy);
-  });
-
   it('/notify/mac/rssi should be unknown on a slave server', async() => {
     role.amIMaster = false;
     const notFoundSpy = sinon.spy(() => {});
