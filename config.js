@@ -4,6 +4,13 @@ const config = {
   port: 5552,
   oneMeterToBeaconRssi: 60,
   beacons: ['71:bc:23:4c:72:5b'],
+  aggregate: {
+    timeout: 10000, // Maximum time we wait all ap measures
+    interval: 5000, // Time between each position event in 'continuous' strategy
+    // 'when_available'  will process position when all ap has responded
+    // 'continuous'      will process position every 'interval' time
+    strategy: 'when_available'
+  },
   accessPoints: {
     pi1: {
       master: true,
