@@ -9,7 +9,7 @@ const config = {
     interval: 5000, // Time between each position event in 'continuous' strategy
     // 'when_available'  will process position when all ap has responded
     // 'continuous'      will process position every 'interval' time
-    strategy: 'when_available'
+    strategy: 'continuous'
   },
   accessPoints: {
     pi1: {

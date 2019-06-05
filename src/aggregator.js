@@ -23,9 +23,16 @@ class BeaconAggregator {
     if (typeof pool[apName] !== 'undefined') {
       this.aggregate(mac);
     }
-    this._timeouts[mac] = setTimeout(() => this.aggregate(mac), 1000);
-    pool[apName] = { rssi, date: new Date() };
-    if (apNames.length === Object.keys(pool).length) {
+    this._timeouts[mac] = setTimeout(() => this.aggregate(mac), config.aggregate.timeout);
+
+    // Save the signal / update with best signal
+    if (!pool[apName]) {
+      pool[apName] = { rssi, date: new Date() };
+    } else if (rssi > pool[apName].rssi) {
+      pool[apName].rssi = rssi;
+    }
+
+    if (apNames.length === Object.keys(pool).length && config.aggregate.strategy === 'when_available') {
       this.aggregate(mac);
     }
   }
