@@ -8,6 +8,7 @@ const web = require('./src/web');
 const logger = require('./lib/logger');
 const config = require('./config');
 
+// TODO add tests for continuous strategy
 // TODO for aggregator, process position at fixed intervals
 // TODO log when receiving aggregate call from slaves (debug)
 // TODO supervisord use node instead of npm call

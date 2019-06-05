@@ -14,39 +14,15 @@ describe('aggregator', () => {
   });
   afterEach(() => sinon.restore());
 
-  describe('slaveReport', () => {
-    it('should not aggregate while there are not all AP responses in "continuous" strategy', async() => {
-      const aggregateSpy = sinon.spy(aggregator, 'aggregate');
-      config.aggregate.strategy = 'continuous';
-      aggregator.slaveReport('pi1', beaconMac, -50);
-      aggregator.slaveReport('pi2', beaconMac, -55);
-      expect(aggregateSpy.callCount).to.equal(0);
-    });
+  describe('slaveReport - "when_available" strategy', () => {
+    beforeEach(() => aggregator.setStrategy('when_available'));
 
-    it('should aggregate with all AP responses in "when_available" strategy', async() => {
+    it('should aggregate with all AP responses', async() => {
       const aggregateStub = sinon.stub(aggregator, 'aggregate');
-      config.aggregate.strategy = 'when_available';
       aggregator.slaveReport('pi1', beaconMac, -50);
       aggregator.slaveReport('pi2', beaconMac, -55);
       aggregator.slaveReport('pi3', beaconMac, -60);
       expect(aggregateStub.callCount).to.equal(1);
-    });
-
-    it('should aggregate in "continuous" every "interval" with best measures', async() => {
-      const aggregateStub = sinon.stub(aggregator, 'aggregate');
-      config.aggregate.strategy = 'continuous';
-      config.aggregate.interval = 10;
-      aggregator.slaveReport('pi1', beaconMac, -50);
-      aggregator.slaveReport('pi2', beaconMac, -55);
-      aggregator.slaveReport('pi3', beaconMac, -60);
-      expect(aggregateStub.callCount).to.equal(0);
-
-      await Promise.delay(20);
-      aggregator.slaveReport('pi1', beaconMac, -45);
-      expect(aggregateStub.callCount).to.equal(1);
-      expect(aggregator._responsePools[beaconMac].pi1.rssi).to.equal(-45);
-      aggregator.slaveReport('pi1', beaconMac, -48);
-      expect(aggregator._responsePools[beaconMac].pi1.rssi).to.equal(-45);
     });
 
     it('should aggregate when an AP responds back before others', async() => {
@@ -68,10 +44,40 @@ describe('aggregator', () => {
     });
   });
 
+  describe('slaveReport - "continuous" strategy', () => {
+    beforeEach(() => aggregator.setStrategy('continuous'));
+
+    it('should not aggregate while there are not all AP responses in "continuous" strategy', async() => {
+      const aggregateSpy = sinon.spy(aggregator, 'aggregate');
+      config.aggregate.strategy = 'continuous';
+      aggregator.slaveReport('pi1', beaconMac, -50);
+      aggregator.slaveReport('pi2', beaconMac, -55);
+      expect(aggregateSpy.callCount).to.equal(0);
+    });
+
+    it('should aggregate in "continuous" every "interval" with best measures', async() => {
+      const aggregateStub = sinon.stub(aggregator, 'aggregate');
+      config.aggregate.strategy = 'continuous';
+      config.aggregate.interval = 10;
+      aggregator.slaveReport('pi1', beaconMac, -50);
+      aggregator.slaveReport('pi2', beaconMac, -55);
+      aggregator.slaveReport('pi3', beaconMac, -60);
+      expect(aggregateStub.callCount).to.equal(0);
+
+      await Promise.delay(20);
+      aggregator.slaveReport('pi1', beaconMac, -45);
+      expect(aggregateStub.callCount).to.equal(1);
+      expect(aggregator._responsePools[beaconMac].pi1.rssi).to.equal(-45);
+      aggregator.slaveReport('pi1', beaconMac, -48);
+      expect(aggregator._responsePools[beaconMac].pi1.rssi).to.equal(-45);
+    });
+  });
+
   describe('aggregate', () => {
     afterEach(() => sinon.restore());
+    beforeEach(() => aggregator.setStrategy('when_available'));
 
-    it('should trilaterate, call back and purge response pool when all AP responded', () => {
+    it('should trilaterate, call back and purge response pool when all AP responded in "when_available" strategy', () => {
       config.aggregate.strategy = 'when_available';
       const findCoordinateStub = sinon.stub(trilateration, 'findCoordinates')
         .returns({ x: 10, y: 5 });

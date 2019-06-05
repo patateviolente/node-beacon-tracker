@@ -9,6 +9,21 @@ class BeaconAggregator {
   constructor() {
     this._responsePools = {};
     this._timeouts = {};
+    this._continuousInterval = null;
+    this._strategy = config.aggregate.strategy;
+  }
+
+  setStrategy(strategy = 'continuous') {
+    this._strategy = strategy;
+
+    if (this._strategy === 'continuous') {
+      Object.values(this._timeouts).map(clearTimeout);
+      this._continuousInterval = setInterval(() => {
+        Object.keys(this._responsePools).forEach((mac) => this.aggregate(mac));
+      }, config.aggregate.interval);
+    } else {
+      clearInterval(this._continuousInterval);
+    }
   }
 
   slaveReport(apName, mac, rssi) {
@@ -32,14 +47,19 @@ class BeaconAggregator {
       pool[apName].rssi = rssi;
     }
 
-    if (apNames.length === Object.keys(pool).length && config.aggregate.strategy === 'when_available') {
+    if (this._strategy === 'when_available' && apNames.length === Object.keys(pool).length) {
       this.aggregate(mac);
     }
   }
 
   aggregate(mac) {
     const responses = this._responsePools[mac];
-    const missingAps = apNames.reduce((missing, apName) => {
+    const hasResponses = Object.keys(responses);
+    if (!hasResponses) {
+      return;
+    }
+
+    const missingAPs = apNames.reduce((missing, apName) => {
       if (!responses[apName]) {
         missing.push(apName);
       }
@@ -50,8 +70,8 @@ class BeaconAggregator {
     clearTimeout(this._timeouts[mac]);
     this._responsePools[mac] = {};
 
-    if (missingAps.length) {
-      return tracker.partialData(missingAps, responses);
+    if (missingAPs.length) {
+      return tracker.partialData(missingAPs, responses);
     }
 
     const coords = trilateration.findCoordinates(responses);
