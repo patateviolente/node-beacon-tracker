@@ -2,8 +2,16 @@ const utils = require('./lib/utils');
 
 const config = {
   port: 5552,
-  oneMeterToBeaconRssi: 60,
-  beacons: ['71:bc:23:4c:72:5b'],
+  beacons: {
+    tora: {
+      mac: '71:bc:23:4c:72:5b',
+      oneMeterToBeaconRssi: {
+        ap1: -52,
+        ap2: -50,
+        ap3: -53
+      }
+    }
+  },
   aggregate: {
     timeout: 10000, // Maximum time we wait all ap measures
     interval: 5000, // Time between each position event in 'continuous' strategy
@@ -47,6 +55,8 @@ const config = {
   }
 };
 
-config.beacons = config.beacons.map(mac => utils.standardizeMac(mac));
+Object.values(config.beacons).map((beacon) => {
+  beacon.mac = utils.standardizeMac(beacon.mac);
+});
 
 module.exports = config;

@@ -15,14 +15,13 @@ class BeaconAggregator {
 
   setStrategy(strategy = 'continuous') {
     this._strategy = strategy;
+    Object.values(this._timeouts).map(clearTimeout);
+    clearInterval(this._continuousInterval);
 
     if (this._strategy === 'continuous') {
-      Object.values(this._timeouts).map(clearTimeout);
       this._continuousInterval = setInterval(() => {
         Object.keys(this._responsePools).forEach((mac) => this.aggregate(mac));
       }, config.aggregate.interval);
-    } else {
-      clearInterval(this._continuousInterval);
     }
   }
 
@@ -35,10 +34,12 @@ class BeaconAggregator {
     const pool = this._responsePools[mac];
 
     // AP already responded
-    if (typeof pool[apName] !== 'undefined') {
-      this.aggregate(mac);
+    if (this._strategy === 'when_available') {
+      if (typeof pool[apName] !== 'undefined') {
+        this.aggregate(mac);
+      }
+      this._timeouts[mac] = setTimeout(() => this.aggregate(mac), config.aggregate.timeout);
     }
-    this._timeouts[mac] = setTimeout(() => this.aggregate(mac), config.aggregate.timeout);
 
     // Save the signal / update with best signal
     if (!pool[apName]) {
@@ -74,7 +75,8 @@ class BeaconAggregator {
       return tracker.partialData(missingAPs, responses);
     }
 
-    const coords = trilateration.findCoordinates(responses);
+    const beaconConfig = Object.values(config.beacons).find(beacon => beacon.mac === mac);
+    const coords = trilateration.findCoordinates(beaconConfig, responses);
     return tracker.newPosition(coords);
   }
 }
