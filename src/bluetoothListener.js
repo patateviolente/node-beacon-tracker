@@ -16,7 +16,8 @@ module.exports.init = function() {
   scanner.onSignal = (peripheral) => {
     const standardizedMac = utils.standardizeMac(peripheral.uuid);
     if (config.beacons.includes(standardizedMac)) {
-      return informMaster(standardizedMac, peripheral.rssi);
+      return informMaster(standardizedMac, peripheral.rssi)
+        .catch(err => logger.error(`Cannot inform master ${err.message}`));
     }
     logger.log(`Non registered peripheral ${standardizedMac} ${peripheral.rssi}`, logger.VERBOSE);
   };
