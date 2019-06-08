@@ -5,10 +5,9 @@ const config = {
   beacons: {
     tora: {
       mac: '71:bc:23:4c:72:5b',
-      oneMeterToBeaconRssi: {
-        ap1: -52,
-        ap2: -50,
-        ap3: -53
+      reference: {
+        distance: 1,
+        rssi: { pi1: -53, pi2: -53, pi3: -53 }
       }
     }
   },

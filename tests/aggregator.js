@@ -102,7 +102,7 @@ describe('aggregator', () => {
       expect(newPositionStub.callCount).to.equal(1);
       expect(partialDataStub.callCount).to.equal(0);
       expect(aggregator._responsePools[beaconMac]).to.eql({});
-      expect(findCoordinateStub.firstCall.args[0]).to.have.keys(['mac', 'oneMeterToBeaconRssi']);
+      expect(findCoordinateStub.firstCall.args[0]).to.have.keys(['mac', 'reference']);
       expect(findCoordinateStub.firstCall.args[1]).to.have.keys(['pi1', 'pi2', 'pi3']);
       expect(findCoordinateStub.firstCall.args[1].pi1.rssi).to.equal(-50);
       expect(newPositionStub.firstCall.args[0]).to.eql({ x: 10, y: 5 });

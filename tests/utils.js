@@ -2,7 +2,7 @@ const expect = require('chai').expect;
 
 const utils = require('../lib/utils');
 
-describe('utils', () => {
+describe('utils lib', () => {
   it('isMac', () => {
     expect(utils.isMac(false)).to.be.false;
     expect(utils.isMac('hello')).to.be.false;
