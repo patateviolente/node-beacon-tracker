@@ -57,5 +57,11 @@ const config = {
 Object.values(config.beacons).map((beacon) => {
   beacon.mac = utils.standardizeMac(beacon.mac);
 });
+config.beaconsMac = Object.values(config.beacons).map((beacon) => beacon.mac);
+config.mastersName = Object.keys(config.accessPoints).find(apName => config.accessPoints[apName].url);
+config.masterIp = config.accessPoints[config.mastersName].url;
+if (!config.masterIp) {
+  utils.exit(`Cannot find master url un accessPoint definition`);
+}
 
 module.exports = config;
