@@ -3,8 +3,15 @@ const utils = require('./lib/utils');
 const config = {
   port: 5552,
   beacons: {
+    // tora_nut: {
+    //   mac: '71:bc:23:4c:72:5b',
+    //   reference: {
+    //     distance: 1,
+    //     rssi: { pi1: -53, pi2: -53, pi3: -53 }
+    //   }
+    // }
     tora: {
-      mac: '71:bc:23:4c:72:5b',
+      mac: 'd2:be:73:87:70:db',
       reference: {
         distance: 1,
         rssi: { pi1: -53, pi2: -53, pi3: -53 }
@@ -24,18 +31,9 @@ const config = {
       url: 'pimaster',
       x: 0,
       y: 0,
-      height: 2
     },
-    pi2: {
-      x: 0.5,
-      y: 8,
-      height: 2
-    },
-    pi3: {
-      x: 7.5,
-      y: 9,
-      height: 2
-    }
+    pi2: { x: 0.5, y: 8 },
+    pi3: { x: 7.5, y: 9 },
   },
   runawayBounds: [
     [[-100, -100], [-1, 8]],
