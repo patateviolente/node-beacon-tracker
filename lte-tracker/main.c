@@ -68,12 +68,14 @@
 #include "nrf_log.h"
 #include "nrf_log_ctrl.h"
 #include "nrf_log_default_backends.h"
-
+#include "app_pwm.h"
 
 #define CONNECTED_LED                   BSP_BOARD_LED_2                         /**< Is on when device has connected. */
 #define ALERT_LED                       BSP_BOARD_LED_1                         /**< LED to be toggled with the help of the LED Button Service. */
 #define VOLTAGE_LED                     BSP_BOARD_LED_0                         /**< LED to be toggled with the help of the LED Button Service. */
 #define LEDBUTTON_BUTTON                BSP_BUTTON_0                            /**< Button that will trigger the notification event with the LED Button Service */
+// #define GPIO_BUZZER_PIN NRF_GPIO_PIN_MAP(0, 6)
+#define GPIO_BUZZER_PIN                 22
 
 #define DEVICE_NAME                     "Tora_虎"                               /**< Name of device. Will be included in the advertising data. */
 
@@ -96,8 +98,6 @@
 #define BUTTON_DETECTION_DELAY          APP_TIMER_TICKS(50)                     /**< Delay from a GPIOTE event until a button is reported as pushed (in number of timer ticks). */
 
 #define DEAD_BEEF                       0xDEADBEEF                              /**< Value used as error code on stack dump, can be used to identify stack location on stack unwind. */
-
-#define GPIO_BUZZER_PIN                 6
 
 BLE_LBS_DEF(m_lbs);                                                             /**< LED Button Service instance. */
 NRF_BLE_GATT_DEF(m_gatt);                                                       /**< GATT module instance. */
@@ -273,13 +273,15 @@ static void cat_alert(uint8_t led_state)
     {
         bsp_board_led_on(ALERT_LED);
         bsp_board_led_on(VOLTAGE_LED);
-        NRF_LOG_INFO("Received LED ON!");
+        nrf_gpio_pin_set(GPIO_BUZZER_PIN);
+        NRF_LOG_INFO("Alarm ON");
     }
     else
     {
         bsp_board_led_off(ALERT_LED);
         bsp_board_led_off(VOLTAGE_LED);
-        NRF_LOG_INFO("Received LED OFF!");
+        nrf_gpio_pin_clear(GPIO_BUZZER_PIN);
+        NRF_LOG_INFO("Alarm OFF");
     }
 }
 
@@ -569,6 +571,21 @@ static void idle_state_handle(void)
     }
 }
 
+/*
+          [16]
+  [4] 4 x      o CLK
+  [5] 5 x      o D10
+  [6] 6 x      x 19 [19]
+  [7] 7 x      o 20 [--]
+  [8] 8 x      x 21 [21]
+  [?] 9 x      x  2 [?]
+  [-]10 x      x  3 [3]
+*/
+static void gpio_init()
+{
+    nrf_gpio_cfg_output(GPIO_BUZZER_PIN);
+}
+
 /**@brief Function for application main entry.
  */
 int main(void)
@@ -585,6 +602,7 @@ int main(void)
     services_init();
     advertising_init();
     conn_params_init();
+    gpio_init();
 
     // Start execution.
     NRF_LOG_INFO("Blinky example started.");
