@@ -15,6 +15,16 @@ const config = {
       reference: {
         distance: 1,
         rssi: { pi1: -53, pi2: -53, pi3: -53 }
+      },
+      pair: {
+        characteristic: {
+          match: { uuid: '000015251212efde1523785feabcd123' },
+          action: (peripheral, characteristic) => {
+            characteristic.write(Buffer.from('1'), true, () => {
+              peripheral.disconnect();
+            });
+          }
+        },
       }
     }
   },

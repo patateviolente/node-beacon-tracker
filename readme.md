@@ -9,7 +9,7 @@ The master aggregates response by small amount of time. When all Nodes received 
 ## Usage
 ### Configuring access point
 The trilateration works in an orthonormal marker. All access point should have a `x` and `x` position set
-```javascript
+```json5
 {
   accessPoints: {
     pi1: {
@@ -34,7 +34,7 @@ The aggregation instance collects all beacons strengths. There are two strategie
 For both strategy; if an AP is missing data, the `tracker.partialData` is called after the defined `timout`. Complete position uses `tracker.newPosition` callback.
 
 
-```javascript
+```json5
 {
   aggregate: {
     timeout: 10000, // Maximum time we wait all ap measures
@@ -68,7 +68,8 @@ Device 71:bc:23:4c:72:5b:
 ```
 
 I'd suggest to take the first high count of RSSI for this benchmark:
-```javascript
+```json5
+{
   beacons: {
     targetName: {
       mac: 'aa:bb:cc:dd:ee:ff',
@@ -77,7 +78,8 @@ I'd suggest to take the first high count of RSSI for this benchmark:
         rssi: { pi1: -56, pi2: -57, pi3: -56 }
       }
     }
-  },
+  }
+}
 ```
 
 ### About RSSI and how to improve positioning
