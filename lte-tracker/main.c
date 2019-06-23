@@ -64,6 +64,7 @@
 #include "nrf_ble_qwr.h"
 #include "nrf_pwr_mgmt.h"
 #include "nrf_gpio.h"
+#include "nrf_delay.h"
 
 #include "nrf_log.h"
 #include "nrf_log_ctrl.h"
@@ -75,7 +76,7 @@
 #define VOLTAGE_LED                     BSP_BOARD_LED_0                         /**< LED to be toggled with the help of the LED Button Service. */
 #define LEDBUTTON_BUTTON                BSP_BUTTON_0                            /**< Button that will trigger the notification event with the LED Button Service */
 // #define GPIO_BUZZER_PIN NRF_GPIO_PIN_MAP(0, 6)
-#define GPIO_BUZZER_PIN                 22
+#define GPIO_BUZZER_PIN                 8
 
 #define DEVICE_NAME                     "Tora_虎"                               /**< Name of device. Will be included in the advertising data. */
 
@@ -274,14 +275,16 @@ static void cat_alert(uint8_t led_state)
         bsp_board_led_on(ALERT_LED);
         bsp_board_led_on(VOLTAGE_LED);
         nrf_gpio_pin_set(GPIO_BUZZER_PIN);
-        NRF_LOG_INFO("Alarm ON");
+
+        NRF_LOG_INFO("Received LED ON!");
     }
     else
     {
         bsp_board_led_off(ALERT_LED);
         bsp_board_led_off(VOLTAGE_LED);
         nrf_gpio_pin_clear(GPIO_BUZZER_PIN);
-        NRF_LOG_INFO("Alarm OFF");
+
+        NRF_LOG_INFO("Received LED OFF!");
     }
 }
 
@@ -571,16 +574,6 @@ static void idle_state_handle(void)
     }
 }
 
-/*
-          [16]
-  [4] 4 x      o CLK
-  [5] 5 x      o D10
-  [6] 6 x      x 19 [19]
-  [7] 7 x      o 20 [--]
-  [8] 8 x      x 21 [21]
-  [?] 9 x      x  2 [?]
-  [-]10 x      x  3 [3]
-*/
 static void gpio_init()
 {
     nrf_gpio_cfg_output(GPIO_BUZZER_PIN);
@@ -603,6 +596,27 @@ int main(void)
     advertising_init();
     conn_params_init();
     gpio_init();
+
+    /*
+          [16]
+  [4] 4 x      o CLK
+  [5] 5 x      o D10
+  [6] 6 x      x 19 [19]
+  [7] 7 x      o 20 [--]
+  [8] 8 x      x 21 [21]
+  [?] 9 x      x  2 [?]
+  [-]10 x      x  3 [3]
+*/
+
+    bsp_board_led_on(CONNECTED_LED);
+    nrf_delay_ms(500);
+    bsp_board_led_off(CONNECTED_LED);
+    bsp_board_led_on(ALERT_LED);
+    nrf_delay_ms(500);
+    bsp_board_led_off(ALERT_LED);
+    bsp_board_led_on(VOLTAGE_LED);
+    nrf_delay_ms(500);
+    bsp_board_led_off(VOLTAGE_LED);
 
     // Start execution.
     NRF_LOG_INFO("Blinky example started.");
