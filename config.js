@@ -46,8 +46,8 @@ const config = {
     pi3: { x: 7.5, y: 9 },
   },
   runawayBounds: [
-    [[-100, -100], [-1, 8]],
-    [[9, -100], [100, 8]]
+    [[-Infinity, -Infinity], [-1, 8]],
+    [[9, -Infinity], [Infinity, 8]]
   ],
   dashboard: {
     enable: true,
