@@ -58,7 +58,7 @@ function router(req, res) {
 }
 
 function showStats() {
-  if(this.lastShow && ((new Date()).getTime() - this.lastShow.getTime()) < 1000){
+  if (this.lastShow && ((new Date()).getTime() - this.lastShow.getTime()) < 1000) {
     return;
   }
   this.lastShow = new Date();
@@ -73,11 +73,19 @@ function showStats() {
 
     Object.keys(stats[mac]).sort().forEach((apName) => {
       const apRssi = stats[mac][apName].sort();
+      const groupRssi = apRssi.reduce((groups, rssi) => {
+        groups[rssi] = (groups[rssi] || 0) + 1;
+
+        return groups;
+      }, {});
+      const formattedGroupRssi = Object.keys(groupRssi).reduce((str, rssi) => {
+        return `${str} ${rssi}x${groupRssi[rssi]}`;
+      }, '')
       const avg = Math.round(apRssi.reduce((sum, rssi) => sum + rssi, 0) / apRssi.length);
       const min = apRssi[0];
       const rate = Math.round((apRssi.length / elaspedSeconds) * 100) / 100;
-      jetty.moveTo([line++, 0]).text(` - ${apName}: ${apRssi.length} signals / min ${min} / avg ${avg} / every ${Math.round(1 / rate)}s`);
-      jetty.moveTo([line++, 0]).text(`${apRssi}`);
+      jetty.moveTo([line++, 0]).text(`[[${apName}]] ${apRssi.length} signals / min ${min} / avg ${avg} / every ${Math.round(1 / rate)}s`);
+      jetty.moveTo([line++, 0]).text(`${formattedGroupRssi}`);
     });
   });
 }
