@@ -1,32 +1,31 @@
-const Promise = require('bluebird');
 const sinon = require('sinon');
 const expect = require('chai').expect;
 
-const trilateration = require('../lib/trilateration');
-const utils = require('../lib/utils');
-const tracker = require('../src/tracker');
-const aggregator = require('../src/aggregator');
-const config = require('../config');
-
 const Bpairing = require('../lib/bpairing');
 
-const peripheralMock = {
-  connect: callback => callback(),
-  discoverAllServicesAndCharacteristics: () => {},
-  disconnect: () => {},
-};
-
 describe('aggregator', () => {
+  let peripheralMock;
+
   afterEach(() => {
     sinon.restore();
   });
 
-  it('should connect to the peripheral', async() => {
-    const connectMock = sinon.stub(peripheralMock.connect());
-    console.log(Bpairing);
-    const bpairing = new Bpairing(peripheralMock);
+  beforeEach(() => {
+    peripheralMock = {
+      connect: callback => callback(),
+      discoverAllServicesAndCharacteristics: () => {},
+      disconnect: callback => callback(),
+    };
+  });
 
+  it('should connect /disconnect the peripheral', async() => {
+    peripheralMock.connect = sinon.spy(peripheralMock.connect);
+    peripheralMock.disconnect = sinon.spy(peripheralMock.disconnect);
+    const bpairing = new Bpairing(peripheralMock);
     await bpairing.connect();
-    expect(connectMock.callCount).to.equal(1);
+    expect(peripheralMock.connect.callCount).to.equal(1);
+
+    await bpairing.disconnect();
+    expect(peripheralMock.disconnect.callCount).to.equal(1);
   });
 });

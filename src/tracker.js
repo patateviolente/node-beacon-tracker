@@ -14,12 +14,15 @@ class Tracker {
     this.alert = false;
     this.outSince = null;
     this.bounds = new RunawayBounds(config.runawayBounds);
-    this.timeoutAlert = null;
-    this.timeoutSleep = null;
   }
 
   setPeripheral(peripheral) {
     this.peripheral = peripheral;
+    this.alarm = new TrackerAlarm(peripheral);
+  }
+
+  partialData(missingAps, responses) {
+    logger.log(`partial position ${JSON.stringify(responses)}`, 2);
   }
 
   newPosition(coords) {
@@ -35,11 +38,8 @@ class Tracker {
     }
 
     // Update alert timing
-    if (this.alert) {
-      return this._updateTiming(distFromZone);
-    }
-
-    this._runAlert();
+    this.alarm.updateTiming(distFromZone);
+    this.alarm.play();
     logger.log(`Forbidden position ${JSON.stringify(coords)}`);
   }
 
@@ -51,37 +51,62 @@ class Tracker {
 
     return this.peripheral.disconnect();
   }
+}
 
-  _updateTiming(distance) {
+class TrackerAlarm {
+  constructor(peripheral, mode = 'once') {
+    this.peripheral = peripheral;
+    this.mode = mode;
+    this.pair = new Bpairing(this.peripheral);
+    this.state = 'disconnected';
+  }
+
+  isPlaying() {
+    return this.state.startsWith('connect');
+  }
+
+  updateTiming(distance) {
     this._timing = {};
     this._timing.sleep = Math.max(Math.min(10 / distance, 4), 1);
     this._timing.alarmDuration = alarmDuration - this._timing.sleep;
   }
 
-  _runAlert() {
-    return new Bpairing()
-    this.alert = true;
-    this._alarmOn();
+  play() {
+    if (this.isPlaying()) {
+      return;
+    }
+
+    this.state = 'connecting';
+
+    return this.pair.connect()
+      .then(() => {
+        this.state = 'connected';
+        this._alarmOn()
+      })
+  }
+
+  pause() {
+    if (this.state.startsWith('connect')) {
+      this.state = 'disconnecting';
+
+      return this.pair.disconnect()
+        .then(() => {
+          this.state = 'disconnected';
+        });
+    }
   }
 
   _alarmOn() {
-    this.timeoutAlert = setTimeout(() => this._alarmOff(), this._timing.sleep * 1000);
-
-    return this.
+    setTimeout(() => this._alarmOff(), this._timing.sleep * 1000);
   }
 
   _alarmOff() {
-    this.timeoutAlert = setTimeout(() => this._alarmOn(), this._timing.sleep * 1000);
-    this.timeoutSleep = setTimeout(() => this._alarmOn(), this._timing.sleep * 1000);
+    // Cannot analyse position en pair both the same time
+    return this.pause();
+
+    // TODO ring continuously until pause() is called when mode === 'continuous'
   }
 
-  _alarmSleep() {
-
-  }
-
-  partialData(missingAps, responses) {
-    logger.log(`partial position ${JSON.stringify(responses)}`, 2);
-  }
 }
 
 module.exports = new Tracker();
