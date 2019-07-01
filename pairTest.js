@@ -45,7 +45,6 @@ class BeaconScanner {
 
   poc(peripheral){
     const characteristicUuid = '000015251212efde1523785feabcd123';
-    console.log('##############################')
     console.log(peripheral);
 
     peripheral.connect((err) => {

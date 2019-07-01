@@ -1,3 +1,5 @@
+const Promise = require('bluebird');
+
 const utils = require('./lib/utils');
 
 const config = {
@@ -19,10 +21,8 @@ const config = {
       pair: {
         characteristic: {
           match: { uuid: '000015251212efde1523785feabcd123' },
-          action: (peripheral, characteristic) => {
-            characteristic.write(Buffer.from('1'), true, () => {
-              peripheral.disconnect();
-            });
+          enable: (characteristic) => {
+            return Promise.promisify(characteristic.write).write(Buffer.from('1'), true);
           }
         },
       }
