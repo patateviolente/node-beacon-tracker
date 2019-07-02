@@ -1,7 +1,7 @@
 const sinon = require('sinon');
 const expect = require('chai').expect;
 
-const Bpairing = require('../lib/bpairing');
+const Bpairing = require('../../lib/bpairing');
 
 describe('aggregator', () => {
   let peripheralMock;

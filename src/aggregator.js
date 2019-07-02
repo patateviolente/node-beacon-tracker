@@ -1,6 +1,7 @@
 const utils = require('../lib/utils');
 const trilateration = require('../lib/trilateration');
-const tracker = require('./tracker');
+
+const Tracker = require('./tracker');
 
 const config = require('../config');
 const apNames = Object.keys(config.accessPoints);
@@ -11,18 +12,29 @@ class BeaconAggregator {
     this._timeouts = {};
     this._continuousInterval = null;
     this._strategy = config.aggregate.strategy;
+    this._trackers = {};
+  }
+
+  addPeripheral(mac, peripheral) {
+    if (!this._trackers[mac]) {
+      this._trackers[mac] = new Tracker(peripheral);
+    }
   }
 
   setStrategy(strategy = 'continuous') {
     this._strategy = strategy;
-    Object.values(this._timeouts).map(clearTimeout);
-    clearInterval(this._continuousInterval);
+    this._resetTimers();
 
     if (this._strategy === 'continuous') {
       this._continuousInterval = setInterval(() => {
         Object.keys(this._responsePools).forEach((mac) => this.aggregate(mac));
       }, config.aggregate.interval);
     }
+  }
+
+  _resetTimers() {
+    Object.values(this._timeouts).map(clearTimeout);
+    clearInterval(this._continuousInterval);
   }
 
   slaveReport(apName, mac, rssi) {
@@ -72,12 +84,13 @@ class BeaconAggregator {
     this._responsePools[mac] = {};
 
     if (missingAPs.length) {
-      return tracker.partialData(missingAPs, responses);
+      return this._trackers[mac].partialData(missingAPs, responses);
     }
 
     const beaconConfig = Object.values(config.beacons).find(beacon => beacon.mac === mac);
     const coords = trilateration.findCoordinates(beaconConfig, responses);
-    return tracker.newPosition(coords);
+
+    return this._trackers[mac].newPosition(coords);
   }
 }
 

@@ -5,10 +5,14 @@ const BeaconScanner = require('../lib/bscanner');
 const utils = require('../lib/utils');
 const logger = require('../lib/logger');
 
+const aggregator = require('./aggregator');
+
 module.exports.init = function() {
   const scanner = new BeaconScanner();
   scanner.onSignal = (peripheral) => {
     const standardizedMac = utils.standardizeMac(peripheral.uuid);
+    aggregator.addPeripheral(standardizedMac, peripheral);
+
     if (config.beaconsMac.includes(standardizedMac)) {
       return informMaster(standardizedMac, peripheral.rssi)
         .catch(err => logger.error(`Cannot inform master ${err.message}`));

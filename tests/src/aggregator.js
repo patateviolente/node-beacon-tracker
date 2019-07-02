@@ -1,27 +1,34 @@
 const Promise = require('bluebird');
 const sinon = require('sinon');
+const proxyquire = require('proxyquire');
 const expect = require('chai').expect;
 
-const trilateration = require('../lib/trilateration');
-const utils = require('../lib/utils');
-const tracker = require('../src/tracker');
-const aggregator = require('../src/aggregator');
-const config = require('../config');
+const trilateration = require('../../lib/trilateration');
+const utils = require('../../lib/utils');
+const Bpairing = require('../../lib/bpairing');
+const aggregator = proxyquire('../../src/aggregator', {
+  './tracker': function() {}
+});
+
+const config = require('../../config');
 
 const beaconMac = utils.standardizeMac('d2be:73:87:70:db');
 
 describe('aggregator', () => {
   beforeEach(() => {
+    aggregator.addPeripheral(beaconMac, null);
     aggregator._responsePools = {};
   });
-  afterEach(() => sinon.restore());
+  afterEach(() => {
+    sinon.restore();
+    aggregator._resetTimers();
+  });
 
   describe('slaveReport - "when_available" strategy', () => {
     beforeEach(() => aggregator.setStrategy('when_available'));
 
     it('should not aggregate without all AP responses', async() => {
       const aggregateSpy = sinon.spy(aggregator, 'aggregate');
-      config.aggregate.strategy = 'continuous';
       aggregator.slaveReport('pi1', beaconMac, -50);
       aggregator.slaveReport('pi2', beaconMac, -55);
       expect(aggregateSpy.callCount).to.equal(0);
@@ -49,18 +56,19 @@ describe('aggregator', () => {
   describe('slaveReport - "continuous" strategy', () => {
     beforeEach(() => {
       config.aggregate.interval = 100;
-      aggregator.setStrategy('continuous');
     });
 
-    it('should not aggregate even with all AP responses in "continuous" strategy', async() => {
-      const aggregateSpy = sinon.spy(aggregator, 'aggregate');
+    it('should not aggregate even with all AP responses', async() => {
+      const aggregateStub = sinon.stub(aggregator, 'aggregate');
+      aggregator.setStrategy('continuous');
       aggregator.slaveReport('pi1', beaconMac, -50);
       aggregator.slaveReport('pi2', beaconMac, -55);
       aggregator.slaveReport('pi3', beaconMac, -52);
-      expect(aggregateSpy.callCount).to.equal(0);
+      expect(aggregateStub.callCount).to.equal(0);
     });
 
     it('should aggregate every "interval" with best measures', async() => {
+      aggregator.setStrategy('continuous');
       const aggregateStub = sinon.stub(aggregator, 'aggregate');
       aggregator.slaveReport('pi1', beaconMac, -50);
       aggregator.slaveReport('pi2', beaconMac, -55);
@@ -92,6 +100,7 @@ describe('aggregator', () => {
       const findCoordinateStub = sinon.stub(trilateration, 'findCoordinates')
         .returns({ x: 10, y: 5 });
       const aggregateSpy = sinon.spy(aggregator, 'aggregate');
+      const tracker = aggregator._trackers[beaconMac];
       const newPositionStub = sinon.stub(tracker, 'newPosition');
       const partialDataStub = sinon.stub(tracker, 'partialData');
       aggregator.slaveReport('pi1', beaconMac, -50);
@@ -111,6 +120,7 @@ describe('aggregator', () => {
     it('should call incompleteData callback where AP response are missing', () => {
       const findCoordinateStub = sinon.stub(trilateration, 'findCoordinates');
       const aggregateSpy = sinon.spy(aggregator, 'aggregate');
+      const tracker = aggregator._trackers[beaconMac];
       const newPositionStub = sinon.stub(tracker, 'newPosition');
       const partialDataStub = sinon.stub(tracker, 'partialData');
       aggregator.slaveReport('pi1', beaconMac, -50);

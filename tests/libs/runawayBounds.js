@@ -1,6 +1,6 @@
 const expect = require('chai').expect;
 
-const RunawayBounds = require('../lib/runawayBounds');
+const RunawayBounds = require('../../lib/runawayBounds');
 
 describe('RunawayBounds lib', () => {
   it('should return boolean when inside / outside bounds', () => {

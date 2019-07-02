@@ -1,7 +1,7 @@
 const expect = require('chai').expect;
 
-const config = require('../config');
-const trilateration = require('../lib/trilateration');
+const config = require('../../config');
+const trilateration = require('../../lib/trilateration');
 
 describe('Trilateration lib', () => {
   const originalAPConfig = config.accessPoints;

@@ -1,6 +1,6 @@
 const expect = require('chai').expect;
 
-const utils = require('../lib/utils');
+const utils = require('../../lib/utils');
 
 describe('utils lib', () => {
   it('isMac', () => {

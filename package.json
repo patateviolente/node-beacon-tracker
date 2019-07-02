@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "export TESTENV= ; node index",
-    "test": "export TESTENV=1 ; ./node_modules/mocha/bin/mocha tests",
+    "test": "export TESTENV=1 ; ./node_modules/mocha/bin/mocha tests/*",
     "benchmark": "node ./benchmark.js"
   },
   "author": "violentpotato",
