@@ -78,4 +78,9 @@ describe('RunawayBounds lib', () => {
     expect(rb2.distancefromZone({ x: 2, y: -1 })).to.equal(2);
     expect(rb2.distancefromZone({ x: -1, y: -1 })).to.equal(2.83);
   });
+
+  it('should return finite value for an infinite zone', () => {
+    const rb = new RunawayBounds([[[-Infinity, -Infinity], [Infinity, Infinity]]]);
+    expect(rb.distancefromZone({ x: 0, y: 0 })).to.equal(-1000000);
+  })
 });

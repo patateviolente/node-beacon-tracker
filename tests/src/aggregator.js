@@ -7,7 +7,9 @@ const trilateration = require('../../lib/trilateration');
 const utils = require('../../lib/utils');
 const Bpairing = require('../../lib/bpairing');
 const aggregator = proxyquire('../../src/aggregator', {
-  './tracker': function() {}
+  './tracker': function() {
+    this.on = function() {}
+  }
 });
 
 const config = require('../../config');

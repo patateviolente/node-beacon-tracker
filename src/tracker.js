@@ -1,3 +1,5 @@
+const events = require('events');
+
 const TrackerAlarm = require('./trackerAlarm');
 
 const logger = require('../lib/logger');
@@ -8,6 +10,12 @@ class Tracker {
   constructor(peripheral) {
     this.bounds = new RunawayBounds(config.runawayBounds);
     this._alarm = new TrackerAlarm(peripheral);
+    this._eventEmitter = new events.EventEmitter();
+    this._on = { alarm: () => {} }
+  }
+
+  on(eventName, callback) {
+    this._on[eventName] = callback;
   }
 
   partialData(missingAps, responses) {
@@ -25,7 +33,9 @@ class Tracker {
 
     // Update alert timing
     logger.log(`Forbidden position ${JSON.stringify(coords)}`);
-    this._alarm.updateTiming(distFromZone);
+    const timing = this._alarm.updateTiming(distFromZone);
+    this._eventEmitter('alarm', timing.beepDuration);
+
     return this._alarm.play();
   }
 }

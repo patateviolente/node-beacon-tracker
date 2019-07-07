@@ -1,4 +1,5 @@
 const utils = require('../lib/utils');
+const logger = require('../lib/logger');
 const trilateration = require('../lib/trilateration');
 
 const Tracker = require('./tracker');
@@ -17,7 +18,18 @@ class BeaconAggregator {
 
   addPeripheral(mac, peripheral) {
     if (!this._trackers[mac]) {
-      this._trackers[mac] = new Tracker(peripheral);
+      const tracker = new Tracker(peripheral);
+
+      // When alarm is ringing, devices is paired and no position can be emitted
+      tracker.on('alarm', (alarmDuration) => {
+        if (this._strategy === 'continuous') {
+          logger.log(`inhibit aggregator continuous timer for ${alarmDuration} seconds`, logger.DEBUG);
+          this._resetTimers();
+          setTimeout(() => setStrategy('continuous'), alarmDuration);
+        }
+      });
+
+      this._trackers[mac] = tracker;
     }
   }
 

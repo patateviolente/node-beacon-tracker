@@ -5,18 +5,11 @@ const utils = require('./lib/utils');
 const config = {
   port: 5552,
   beacons: {
-    // tora_nut: {
-    //   mac: '71:bc:23:4c:72:5b',
-    //   reference: {
-    //     distance: 1,
-    //     rssi: { pi1: -53, pi2: -53, pi3: -53 }
-    //   }
-    // }
     tora: {
       mac: 'd2:be:73:87:70:db',
       reference: {
-        distance: 1,
-        rssi: { pi1: -53, pi2: -53, pi3: -53 }
+        distance: 3,
+        rssi: { pi1: -59, pi2: -66, pi3: -66 }
       },
       pair: {
         characteristic: {
@@ -27,6 +20,13 @@ const config = {
         },
       }
     }
+    // tora_nut: {
+    //   mac: '71:bc:23:4c:72:5b',
+    //   reference: {
+    //     distance: 1,
+    //     rssi: { pi1: -53, pi2: -53, pi3: -53 }
+    //   }
+    // }
   },
   aggregate: {
     timeout: 10000, // Maximum time we wait all ap measures
@@ -46,6 +46,7 @@ const config = {
     pi3: { x: 7.5, y: 9 },
   },
   runawayBounds: [
+    [[-Infinity, -Infinity], [Infinity, Infinity]],
     [[-Infinity, -Infinity], [-1, 8]],
     [[9, -Infinity], [Infinity, 8]]
   ],

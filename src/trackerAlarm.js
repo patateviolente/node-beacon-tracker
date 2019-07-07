@@ -13,6 +13,8 @@ class TrackerAlarm {
   updateTiming(distance) {
     this._timing = {};
     this._timing.beepDuration = Math.max(Math.min(distance / 2, maxBeepDuration), minBeepDuration);
+
+    return this._timing;
   }
 
   async play() {
