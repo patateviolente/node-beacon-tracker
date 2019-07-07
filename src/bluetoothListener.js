@@ -7,8 +7,9 @@ const logger = require('../lib/logger');
 
 const aggregator = require('./aggregator');
 
+const scanner = new BeaconScanner();
+
 module.exports.init = function() {
-  const scanner = new BeaconScanner();
   scanner.onSignal = (peripheral) => {
     const standardizedMac = utils.standardizeMac(peripheral.uuid);
     aggregator.addPeripheral(standardizedMac, peripheral);
@@ -22,6 +23,12 @@ module.exports.init = function() {
 
   logger.log('...initializing bluetooth listener');
   scanner.startScan()
+    .then(() => logger.log('Listener ready'))
+    .catch(error => logger.error(error));
+};
+
+module.exports.scan = () => {
+  return scanner.startScan()
     .then(() => logger.log('Listener ready'))
     .catch(error => logger.error(error));
 };

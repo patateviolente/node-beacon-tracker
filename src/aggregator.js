@@ -25,7 +25,7 @@ class BeaconAggregator {
         if (this._strategy === 'continuous') {
           logger.log(`inhibit aggregator continuous timer for ${alarmDuration} seconds`, logger.DEBUG);
           this._resetTimers();
-          setTimeout(() => setStrategy('continuous'), alarmDuration);
+          setTimeout(() => this.setStrategy('continuous'), alarmDuration);
         }
       });
 
