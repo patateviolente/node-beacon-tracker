@@ -30,7 +30,14 @@ class TrackerAlarm {
     if (this.state.startsWith('disconnect')) return;
     this.state = 'disconnecting';
 
-    await this.pair.disconnect();
+    await this.pair.disconnect()
+      .then(() => {
+        const bluetoothListener = require('./bluetoothListener');
+        console.log('___disconnected');
+
+        return bluetoothListener.scan();
+      });
+    ;
     this.state = 'disconnected';
   }
 

@@ -36,6 +36,7 @@ class BeaconAggregator {
   setStrategy(strategy = 'continuous') {
     this._strategy = strategy;
     this._resetTimers();
+    logger.log(`strategy set to ${strategy}`);
 
     if (this._strategy === 'continuous') {
       this._continuousInterval = setInterval(() => {
