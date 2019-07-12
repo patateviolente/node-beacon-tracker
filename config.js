@@ -5,8 +5,10 @@ const utils = require('./lib/utils');
 const config = {
   port: 5552,
   beacons: {
+    // Tora nRF52840  d2:be:73:87:70:db
+    // Tora Nut gris  71:bc:23:4c:72:5b
     tora: {
-      mac: 'd2:be:73:87:70:db',
+      mac: '71:bc:23:4c:72:5b',
       reference: {
         distance: 3,
         rssi: { pi1: -59, pi2: -66, pi3: -66 }
@@ -20,13 +22,6 @@ const config = {
         },
       }
     }
-    // tora_nut: {
-    //   mac: '71:bc:23:4c:72:5b',
-    //   reference: {
-    //     distance: 1,
-    //     rssi: { pi1: -53, pi2: -53, pi3: -53 }
-    //   }
-    // }
   },
   aggregate: {
     timeout: 10000, // Maximum time we wait all ap measures
