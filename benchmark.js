@@ -9,7 +9,7 @@ const role = require('./src/role');
 
 const jetty = new Jetty(process.stdout);
 const stats = {};
-const definedDevices = Object.values(config.beacons).map(({ mac }) => mac);
+const definedDevices = config.beacons.map(({ mac }) => mac);
 
 const startTime = new Date();
 http.createServer(router).listen(config.port);

@@ -18,7 +18,7 @@ class BeaconAggregator {
 
   addPeripheral(mac, peripheral) {
     if (!this._trackers[mac]) {
-      const beaconConfig = config.beaconsConfigByMac[mac];
+      const beaconConfig = config.beacons.find(beaconConfig => beaconConfig.mac === mac);
       const tracker = new Tracker(peripheral, beaconConfig);
 
       // When alarm is ringing, devices is paired and no position can be emitted
@@ -104,7 +104,7 @@ class BeaconAggregator {
       return this._trackers[mac].partialData(missingAPs, responses);
     }
 
-    const beaconConfig = Object.values(config.beacons).find(beacon => beacon.mac === mac);
+    const beaconConfig = config.beacons.find(beacon => beacon.mac === mac);
     const coords = trilateration.findCoordinates(beaconConfig, responses);
 
     return this._trackers[mac].newPosition(coords);

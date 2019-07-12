@@ -64,7 +64,7 @@ class TrackerAlarm {
     return this.pair.getService(pairConfig.service)
       .then(service => this.pair.getCharacteristic(service, pairConfig.characteristic))
       .tap(() => logger.log(`[P] play alarm for ${duration} seconds`, logger.DEBUG))
-      .then(charcateristic => pairConfig.enable(charcateristic));
+      .then(characteristic => pairConfig.enable(characteristic));
   }
 
   _alarmOff() {
@@ -73,7 +73,7 @@ class TrackerAlarm {
     return this.pair.getService(pairConfig.service)
       .then(service => this.pair.getCharacteristic(service, pairConfig.characteristic))
       .tap(() => logger.log('[-] stop alarm', logger.DEBUG))
-      .then(charcateristic => pairConfig.enable(charcateristic));
+      .then(characteristic => pairConfig.disable(characteristic));
   }
 }
 
