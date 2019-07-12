@@ -18,15 +18,17 @@ class BeaconAggregator {
 
   addPeripheral(mac, peripheral) {
     if (!this._trackers[mac]) {
-      const tracker = new Tracker(peripheral);
+      const beaconConfig = config.beaconsConfigByMac[mac];
+      const tracker = new Tracker(peripheral, beaconConfig);
 
       // When alarm is ringing, devices is paired and no position can be emitted
       tracker.on('alarm', (alarmDuration) => {
-        if (this._strategy === 'continuous') {
-          logger.log(`inhibit aggregator continuous timer for ${alarmDuration} seconds`, logger.DEBUG);
-          this._resetTimers();
-          setTimeout(() => this.setStrategy('continuous'), alarmDuration);
-        }
+        // TODO add event 'paired' / 'disconnected'
+        // if (this._strategy === 'continuous') {
+        //   logger.log(`inhibit aggregator continuous timer for ${alarmDuration} seconds`, logger.DEBUG);
+        //   this._resetTimers();
+        //   setTimeout(() => this.setStrategy('continuous'), alarmDuration);
+        // }
       });
 
       this._trackers[mac] = tracker;
@@ -80,8 +82,10 @@ class BeaconAggregator {
 
   aggregate(mac) {
     const responses = this._responsePools[mac];
-    const hasResponses = Object.keys(responses);
-    if (!hasResponses) {
+    const hasResponses = Object.keys(responses).length;
+
+    // No response at all / Master is not initialized yet
+    if (!hasResponses || !this._trackers[mac]) {
       return;
     }
 

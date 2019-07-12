@@ -7,9 +7,9 @@ const RunawayBounds = require('../lib/runawayBounds');
 const config = require('../config');
 
 class Tracker {
-  constructor(peripheral) {
+  constructor(peripheral, beaconConfig) {
     this.bounds = new RunawayBounds(config.runawayBounds);
-    this._alarm = new TrackerAlarm(peripheral);
+    this._alarm = new TrackerAlarm(peripheral, beaconConfig);
     this._eventEmitter = new events.EventEmitter();
   }
 
@@ -27,7 +27,7 @@ class Tracker {
 
     if (isAllowed) {
       logger.log(`Position ok ${JSON.stringify(coords)}`);
-      return this._alarm.pause();
+      return this._alarm.stop();
     }
 
     // Update alert timing

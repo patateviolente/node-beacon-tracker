@@ -43,33 +43,20 @@ class BeaconScanner {
     });
   }
 
-  poc(peripheral){
-    const characteristicUuid = '000015251212efde1523785feabcd123';
-    console.log(peripheral);
-
+  poc(peripheral) {
     peripheral.connect((err) => {
-      console.log('connected');
-      console.log(err);
-      peripheral.discoverAllServicesAndCharacteristics((err, services) => {
-        const characteristic = services.reduce((foundChar, service) => {
-          return service.characteristics.find(({uuid}) => uuid === characteristicUuid) || foundChar;
-        }, null);
+      peripheral.discoverServices('0000ff0000001000800000805f9b34fb', (err, [service]) => {
+        service.discoverCharacteristics('0000ff0100001000800000805f9b34fb', (err, [characteristic]) => {
 
-        if(!characteristic){
-          throw new Error(`cannot find characteristic ${characteristicUuid}`);
-        }
+          characteristic.write(Buffer.from('04', 'hex'), false, () => {});
+          setTimeout(() => {
+            characteristic.write(Buffer.from('03', 'hex'), false, () => {
+              peripheral.disconnect();
+              process.exit(0);
+            });
+          }, 5000);
 
-        console.log('===>');
-        console.log(characteristic);
-        characteristic.write(Buffer.from('1'), true, () => {
-          console.log('on')
         });
-        setTimeout(() => {
-          characteristic.write(Buffer.from('1'), true, () => {
-            console.log('off');
-            peripheral.disconnect();
-          });
-        }, 5000);
       });
     });
   }
@@ -80,7 +67,7 @@ class BeaconScanner {
         noble.on('discover', (peripheral) => {
           if (!this._filter.length || this._filter.includes(peripheral.uuid)) {
             console.log('...');
-            if(!once){
+            if (!once) {
               once = true;
               this.onSignal(peripheral);
               this.poc(peripheral);
@@ -92,8 +79,5 @@ class BeaconScanner {
   }
 }
 
-scanner = new BeaconScanner(['d2be738770db']);
+scanner = new BeaconScanner(['71bc234c725b']);
 scanner.startScan();
-console.log('__________')
-console.log(scanner);
-

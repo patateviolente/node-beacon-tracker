@@ -13,12 +13,13 @@ describe('aggregator', () => {
   beforeEach(() => {
     peripheralMock = {
       connect: callback => callback(),
-      discoverAllServicesAndCharacteristics: () => {},
+      discoverServices: () => {},
       disconnect: callback => callback(),
     };
   });
 
   it('should connect /disconnect the peripheral', async() => {
+    peripheralMock.state = 'connected';
     peripheralMock.connect = sinon.spy(peripheralMock.connect);
     peripheralMock.disconnect = sinon.spy(peripheralMock.disconnect);
     const bpairing = new Bpairing(peripheralMock);

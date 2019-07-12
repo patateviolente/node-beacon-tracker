@@ -1,11 +1,16 @@
+const Promise = require('bluebird');
+
 const Bpairing = require('../lib/bpairing');
 
-const maxBeepDuration = 5;
-const minBeepDuration = 1;
+const maxBeepDuration = 10;
+const minBeepDuration = 5;
+
+const logger = require('../lib/logger');
 
 class TrackerAlarm {
-  constructor(peripheral) {
+  constructor(peripheral, beaconConfig) {
     this.peripheral = peripheral;
+    this.beaconConfig = beaconConfig;
     this.pair = new Bpairing(this.peripheral);
     this.state = 'disconnected';
   }
@@ -17,36 +22,58 @@ class TrackerAlarm {
     return this._timing;
   }
 
-  async play() {
-    if (this.state.startsWith('connect')) return;
-    this.state = 'connecting';
+  play() {
+    return Promise.try(() => {
+      if (this.state.startsWith('connect')) return;
+      this.state = 'connecting';
 
-    await this.pair.connect();
-    this.state = 'connected';
-    this._alarmOn();
+      return this.pair.connect();
+    })
+      .then(() => {
+        this.state = 'connected';
+
+        return this._alarmOn(this._timing.beepDuration);
+      })
+      .delay(this._timing.beepDuration * 1000)
+      .then(() => this._alarmOff())
+      .catch(logger.error)
+      .finally(() => this.stop());
   }
 
-  async pause() {
-    if (this.state.startsWith('disconnect')) return;
+  stop() {
+    if (this.state.startsWith('disconnect')) {
+      return Promise.resolve();
+    }
+
     this.state = 'disconnecting';
 
-    await this.pair.disconnect()
-      .then(() => {
+    return this.pair.disconnect()
+      .catch(logger.error)
+      .finally(() => {
         const bluetoothListener = require('./bluetoothListener');
-        console.log('___disconnected');
+        this.state = 'disconnected';
 
         return bluetoothListener.scan();
-      });
-    ;
-    this.state = 'disconnected';
+      })
+      .catch(logger.error);
   }
 
-  _alarmOn() {
-    setTimeout(() => this._alarmOff(), this._timing.beepDuration * 1000);
+  _alarmOn(duration) {
+    const pairConfig = this.beaconConfig.pair;
+
+    return this.pair.getService(pairConfig.service)
+      .then(service => this.pair.getCharacteristic(service, pairConfig.characteristic))
+      .tap(() => logger.log(`[P] play alarm for ${duration} seconds`, logger.DEBUG))
+      .then(charcateristic => pairConfig.enable(charcateristic));
   }
 
   _alarmOff() {
-    return this.pause();
+    const pairConfig = this.beaconConfig.pair;
+
+    return this.pair.getService(pairConfig.service)
+      .then(service => this.pair.getCharacteristic(service, pairConfig.characteristic))
+      .tap(() => logger.log('[-] stop alarm', logger.DEBUG))
+      .then(charcateristic => pairConfig.enable(charcateristic));
   }
 }
 

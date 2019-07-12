@@ -14,7 +14,7 @@ const aggregator = proxyquire('../../src/aggregator', {
 
 const config = require('../../config');
 
-const beaconMac = utils.standardizeMac('d2be:73:87:70:db');
+const beaconMac = utils.standardizeMac('71:bc:23:4c:72:5b');
 
 describe('aggregator', () => {
   beforeEach(() => {

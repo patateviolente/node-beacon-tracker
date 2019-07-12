@@ -10,25 +10,23 @@ const config = {
     tora: {
       mac: '71:bc:23:4c:72:5b',
       reference: {
-        distance: 3,
-        rssi: { pi1: -59, pi2: -66, pi3: -66 }
+        distance: 1,
+        rssi: { pi1: -54, pi2: -63, pi3: -64 }
       },
       pair: {
-        characteristic: {
-          match: { uuid: '000015251212efde1523785feabcd123' },
-          enable: (characteristic) => {
-            return Promise.promisify(characteristic.write).write(Buffer.from('1'), true);
-          }
-        },
+        service: '0000ff0000001000800000805f9b34fb',
+        characteristic: '0000ff0100001000800000805f9b34fb',
+        enable: characteristic => characteristic.writeAsync(Buffer.from('03', 'hex'), false),
+        disable: characteristic => characteristic.writeAsync(Buffer.from('03', 'hex'), false)
       }
     }
   },
   aggregate: {
-    timeout: 10000, // Maximum time we wait all ap measures
-    interval: 5000, // Time between each position event in 'continuous' strategy
+    timeout: 12000, // Maximum time we wait all ap measures in 'when_available' strategy
+    interval: 8000, // Time between each position event in 'continuous' strategy
     // 'when_available'  will process position when all ap has responded
     // 'continuous'      will process position every 'interval' time
-    strategy: 'continuous'
+    strategy: 'when_available'
   },
   accessPoints: {
     pi1: {
@@ -64,6 +62,12 @@ Object.values(config.beacons).map((beacon) => {
 config.beaconsMac = Object.values(config.beacons).map((beacon) => beacon.mac);
 config.mastersName = Object.keys(config.accessPoints).find(apName => config.accessPoints[apName].url);
 config.masterIp = config.accessPoints[config.mastersName].url;
+config.beaconsConfigByMac = Object.values(config.beacons).reduce((beacons, beacon) => {
+  beacons[beacon.mac] = beacon;
+
+  return beacons;
+}, {});
+
 if (!config.masterIp) {
   utils.exit(`Cannot find master url un accessPoint definition`);
 }
