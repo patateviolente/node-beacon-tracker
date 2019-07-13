@@ -4,7 +4,7 @@ const config = require('../config');
 const role = require('../src/role');
 const utils = require('../lib/utils');
 const logger = require('../lib/logger');
-const aggregator = require('./aggregator');
+const Aggregator = require('./aggregator');
 
 const HttpError = require('../lib/errors').HttpError;
 
@@ -44,7 +44,7 @@ function notify(req) {
     if (Object.keys(config.accessPoints).includes(params[0])
       && utils.isMac(params[1])
       && utils.isNumeric(params[2])) {
-      return aggregator.slaveReport(params[0], params[1], parseFloat(params[2]));
+      return Aggregator.byMAC(params[1]).slaveReport(params[0], parseFloat(params[2]));
     }
 
     throw new HttpError(400, `Route ${req.url} invalid`);

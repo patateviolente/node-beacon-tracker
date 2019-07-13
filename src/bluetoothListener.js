@@ -1,18 +1,17 @@
 const role = require('../src/role');
+const Aggregator = require('../src/aggregator');
 const config = require('../config');
 
 const BeaconScanner = require('../lib/bscanner');
 const utils = require('../lib/utils');
 const logger = require('../lib/logger');
 
-const aggregator = require('./aggregator');
-
 const scanner = new BeaconScanner();
 
 module.exports.init = function() {
   scanner.onSignal = (peripheral) => {
-    const standardizedMac = utils.standardizeMac(peripheral.uuid);
-    aggregator.addPeripheral(standardizedMac, peripheral);
+    const standardizedMac = utils.standardizeMac();
+    Aggregator.byMAC(standardizedMac).addPeripheral(peripheral);
 
     if (config.beaconsMac.includes(standardizedMac)) {
       return informMaster(standardizedMac, peripheral.rssi)

@@ -24,12 +24,12 @@ describe('router', () => {
 
   it('/notify/mac/rssi should report position', async() => {
     role.amIMaster = true;
-    const slaveReportStub = sinon.stub();
+    const byMacStub = sinon.stub();
     const router = proxyquire('../../src/router', {
-      './aggregator': { slaveReport: slaveReportStub }
+      './aggregator': { byMAC: byMacStub }
     });
     await router({ url: '/notify/pi2/11:22:33:aa:bb:cc/-60' });
-    sinon.assert.calledOnce(slaveReportStub);
-    expect(slaveReportStub.firstCall.args).to.eql(['pi2', '11:22:33:aa:bb:cc', -60]);
+    sinon.assert.calledOnce(byMacStub);
+    expect(byMacStub.firstCall.args).to.eql(['11:22:33:aa:bb:cc']);
   });
 });
