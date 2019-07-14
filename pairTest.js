@@ -66,7 +66,6 @@ class BeaconScanner {
       .then(() => {
         noble.on('discover', (peripheral) => {
           if (!this._filter.length || this._filter.includes(peripheral.uuid)) {
-            console.log('...');
             if (!once) {
               once = true;
               this.onSignal(peripheral);

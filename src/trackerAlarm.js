@@ -31,21 +31,19 @@ class TrackerAlarm {
       .delay(this._timing.beepDuration * 1000)
       .then(() => this._alarmOff())
       .catch(logger.error)
-      .finally(() => this.stop());
+      .finally(() => this.stop()
+        .then(() => this._restartListener()));
   }
 
   stop() {
-    if (this.peripheral.state === 'disconnected') {
-      return Promise.resolve();
-    }
-
     return this.pair.disconnect()
-      .catch(logger.error)
-      .then(() => {
-        const bluetoothListener = require('./bluetoothListener');
+      .catch(logger.error);
+  }
 
-        return bluetoothListener.scan();
-      });
+  _restartListener() {
+    const bluetoothListener = require('./bluetoothListener');
+
+    return bluetoothListener.scan();
   }
 
   _alarmOn(duration) {
