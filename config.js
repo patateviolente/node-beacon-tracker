@@ -2,6 +2,7 @@ const utils = require('./lib/utils');
 
 const config = {
   port: 5552,
+  ble_throttle: 200,
   // Tora nRF52840  d2:be:73:87:70:db
   // Tora Nut gris  71:bc:23:4c:72:5b
   beacons: [
@@ -13,11 +14,7 @@ const config = {
         rssi: { pi1: -54, pi2: -63, pi3: -64 }
       },
 
-      aggregate: {
-        timeout: 12000,
-        interval: 8000,
-        strategy: 'when_available'
-      },
+      aggregate: { strategy: 'continuous' },
       pair: {
         service: '0000ff0000001000800000805f9b34fb',
         characteristic: '0000ff0100001000800000805f9b34fb',
@@ -29,10 +26,10 @@ const config = {
   // Default aggregate values for beacons
   aggregate: {
     timeout: 12000, // Maximum time we wait all ap measures in 'when_available' strategy
-    interval: 8000, // Time between each position event in 'continuous' strategy
+    interval: 4500, // Time between each position event in 'continuous' strategy
     // 'when_available'  will process position when all ap has responded
     // 'continuous'      will process position every 'interval' time
-    strategy: 'when_available'
+    strategy: 'continuous'
   },
   accessPoints: {
     pi1: {

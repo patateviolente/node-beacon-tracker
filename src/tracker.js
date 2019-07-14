@@ -27,6 +27,7 @@ class Tracker {
 
     if (isAllowed) {
       logger.log(`Position ok ${JSON.stringify(coords)}`);
+
       return this._alarm.stop();
     }
 

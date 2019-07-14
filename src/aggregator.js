@@ -19,14 +19,14 @@ class BeaconAggregator {
     this._tracker = null;
     this.aggregateConfig = Object.assign({}, config.aggregate, beaconConfig.aggregate || {});
 
-    this.setStrategy(this.aggregateConfig.strategy);
+    this.setStrategy();
   }
 
-  static byMAC(mac){
+  static byMAC(mac) {
     return aggregates[utils.standardizeMac(mac)];
   }
 
-  static instantiateAll(){
+  static instantiateAll() {
     aggregates = config.beacons.reduce((aggregates, beaconConfig) => {
       aggregates[beaconConfig.mac] = new BeaconAggregator(beaconConfig);
 
@@ -40,21 +40,21 @@ class BeaconAggregator {
 
       // When alarm is ringing, devices is paired and no position can be emitted
       tracker.on('alarm', (alarmDuration) => {
-        // TODO add event 'paired' / 'disconnected'
-        // if (this._strategy === 'continuous') {
-        //   logger.log(`inhibit aggregator continuous timer for ${alarmDuration} seconds`, logger.DEBUG);
-        //   this._resetTimers();
-        //   setTimeout(() => this.setStrategy('continuous'), alarmDuration);
-        // }
+        this._resetTimers();
+        logger.log(`inhibit aggregator for ${alarmDuration} seconds`, logger.DEBUG);
+
+        // TODO move this into a new event
+        setTimeout(() => this.setStrategy(), alarmDuration * 1000);
       });
 
       this._tracker = tracker;
     }
   }
 
-  setStrategy(strategy = 'continuous') {
+  setStrategy(strategy = this.aggregateConfig.strategy) {
     this._strategy = strategy;
     this._resetTimers();
+    this._responsePools = {};
     logger.log(`strategy set to ${strategy}`);
 
     if (this._strategy === 'continuous') {
@@ -65,6 +65,7 @@ class BeaconAggregator {
   _resetTimers() {
     clearTimeout(this._timeout);
     clearInterval(this._continuousInterval);
+    this._responsePools = {};
   }
 
   slaveReport(apName, rssi) {
@@ -73,9 +74,6 @@ class BeaconAggregator {
 
     // AP already responded
     if (this._strategy === 'when_available') {
-      if (typeof pool[apName] !== 'undefined') {
-        this.aggregate();
-      }
       this._timeout = setTimeout(() => this.aggregate(), config.aggregate.timeout);
     }
 

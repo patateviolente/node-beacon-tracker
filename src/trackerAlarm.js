@@ -12,7 +12,6 @@ class TrackerAlarm {
     this.peripheral = peripheral;
     this.beaconConfig = beaconConfig;
     this.pair = new Bpairing(this.peripheral);
-    this.state = 'disconnected';
   }
 
   updateTiming(distance) {
@@ -24,16 +23,11 @@ class TrackerAlarm {
 
   play() {
     return Promise.try(() => {
-      if (this.state.startsWith('connect')) return;
-      this.state = 'connecting';
+      if (this.peripheral.state === 'connected') return;
 
       return this.pair.connect();
     })
-      .then(() => {
-        this.state = 'connected';
-
-        return this._alarmOn(this._timing.beepDuration);
-      })
+      .then(() => this._alarmOn(this._timing.beepDuration))
       .delay(this._timing.beepDuration * 1000)
       .then(() => this._alarmOff())
       .catch(logger.error)
@@ -41,21 +35,17 @@ class TrackerAlarm {
   }
 
   stop() {
-    if (this.state.startsWith('disconnect')) {
+    if (this.peripheral.state === 'disconnected') {
       return Promise.resolve();
     }
 
-    this.state = 'disconnecting';
-
     return this.pair.disconnect()
       .catch(logger.error)
-      .finally(() => {
+      .then(() => {
         const bluetoothListener = require('./bluetoothListener');
-        this.state = 'disconnected';
 
         return bluetoothListener.scan();
-      })
-      .catch(logger.error);
+      });
   }
 
   _alarmOn(duration) {

@@ -8,16 +8,27 @@ const logger = require('../lib/logger');
 
 const scanner = new BeaconScanner();
 
+const lastSignalPerMac = {};
+
 module.exports.init = function() {
   scanner.onSignal = (peripheral) => {
-    const standardizedMac = utils.standardizeMac();
-    Aggregator.byMAC(standardizedMac).addPeripheral(peripheral);
+    const standardizedMac = utils.standardizeMac(peripheral.uuid);
 
-    if (config.beaconsMac.includes(standardizedMac)) {
-      return informMaster(standardizedMac, peripheral.rssi)
-        .catch(err => logger.error(`Cannot inform master ${err.message}`));
+    if (!config.beaconsMac.includes(standardizedMac)) {
+      return logger.log(`Non registered peripheral ${standardizedMac} ${peripheral.rssi}`, logger.EXPERIMENT);
     }
-    logger.log(`Non registered peripheral ${standardizedMac} ${peripheral.rssi}`, logger.VERBOSE);
+
+    const tooManySignals = (lastSignalPerMac[standardizedMac] || new Date()) + config.ble_throttle > new Date();
+    if (tooManySignals) {
+      return logger.log(`Throttle signal ${standardizedMac} ${peripheral.rssi}`, logger.EXPERIMENT);
+    }
+
+    lastSignalPerMac[standardizedMac] = new Date();
+    Aggregator.byMAC(standardizedMac).addPeripheral(peripheral);
+    lastSignalPerMac[standardizedMac] = new Date();
+
+    return informMaster(standardizedMac, peripheral.rssi)
+      .catch(err => logger.error(`Cannot inform master ${err.message}`));
   };
 
   logger.log('...initializing bluetooth listener');
@@ -34,7 +45,7 @@ module.exports.scan = () => {
 
 function informMaster(mac, rssi) {
   const masterUrl = `http://${config.masterIp}:${config.port}/notify/${role.whoami}/${mac}/${rssi}`;
-  logger.log(`Beacon found - call master ${masterUrl}`, logger.DEBUG);
+  logger.log(`Beacon found - call master ${masterUrl}`, role.amISlave ? logger.VERBOSE : logger.EXPERIMENT);
 
   return utils.getHttp(masterUrl);
 }
