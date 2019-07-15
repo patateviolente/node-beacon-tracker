@@ -26,7 +26,7 @@ const config = {
   // Default aggregate values for beacons
   aggregate: {
     timeout: 12000, // Maximum time we wait all ap measures in 'when_available' strategy
-    interval: 4500, // Time between each position event in 'continuous' strategy
+    interval: 6500, // Time between each position event in 'continuous' strategy
     // 'when_available'  will process position when all ap has responded
     // 'continuous'      will process position every 'interval' time
     strategy: 'continuous'
@@ -35,14 +35,13 @@ const config = {
     pi1: {
       master: true,
       url: 'pimaster',
-      x: 0,
-      y: 0,
+      x: 0.5,
+      y: 8
     },
-    pi2: { x: 0.5, y: 8 },
-    pi3: { x: 7.5, y: 9 },
+    pi2: { x: 7.5, y: 9 },
+    pi3: { x: 0, y: 0 },
   },
   runawayBounds: [
-    [[-Infinity, -Infinity], [Infinity, Infinity]],
     [[-Infinity, -Infinity], [-1, 8]],
     [[9, -Infinity], [Infinity, 8]]
   ],
