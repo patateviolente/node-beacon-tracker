@@ -90,7 +90,7 @@ The program will pair the device and trigger a Bluetooth service defined for the
 ## Benchmark your beacon
 Positions are calculated using an RSSI mesure on a defined distance, generally 1 meter. This strength can vary depending the receptor antenna quality or the beacon steadiness.
 
-In this sample configuration, all AP has been placed on the same position and the beacon was placed 1 meter away. Run the sample app `npm run benchmark` and let it run a few minutes. This will progressively fill the ugly output as below:
+In this sample configuration, all AP has been placed on the same position and the beacon was placed 3 meters away. Run the sample app `npm run benchmark` and let it run a few minutes. This will progressively fill the ugly output as below:
 ```
 Benchmarking device in 71:bc:23:4c:72:5b run 652s
 Device 71:bc:23:4c:72:5b:

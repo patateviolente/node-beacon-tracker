@@ -1,30 +1,30 @@
 /**
  * Copyright (c) 2015 - 2018, Nordic Semiconductor ASA
- * 
+ *
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice, this
  *    list of conditions and the following disclaimer.
- * 
+ *
  * 2. Redistributions in binary form, except as embedded into a Nordic
  *    Semiconductor ASA integrated circuit in a product or a software update for
  *    such product, must reproduce the above copyright notice, this list of
  *    conditions and the following disclaimer in the documentation and/or other
  *    materials provided with the distribution.
- * 
+ *
  * 3. Neither the name of Nordic Semiconductor ASA nor the names of its
  *    contributors may be used to endorse or promote products derived from this
  *    software without specific prior written permission.
- * 
+ *
  * 4. This software, with or without modification, must only be used with a
  *    Nordic Semiconductor ASA integrated circuit.
- * 
+ *
  * 5. Any software provided in binary form under this license must not be reverse
  *    engineered, decompiled, modified and/or disassembled.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY NORDIC SEMICONDUCTOR ASA "AS IS" AND ANY EXPRESS
  * OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY, NONINFRINGEMENT, AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -35,12 +35,15 @@
  * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
  * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- * 
+ *
  */
 /**
- * @brief Blinky Sample Application main file.
- *
- * This file contains the source code for a sample server application using the LED Button service.
+ * This file contains the source code based on Nordic blinky samples
+ * - All (4) leds are lighten up 250ms at boot
+ * - The BLE devices broadcast signal every 2 seconds
+ * - When connected to the device, the blue LED is lighten
+ * - When LED service receives 0x01, the GPIO_BUZZER_PIN and ALERT_LED are set to 3V
+ * - When disconnected or 0x00, pins / LEDS are off
  */
 
 #include <stdint.h>
@@ -75,7 +78,6 @@
 #define ALERT_LED                       BSP_BOARD_LED_1                         /**< LED to be toggled with the help of the LED Button Service. */
 #define VOLTAGE_LED                     BSP_BOARD_LED_0                         /**< LED to be toggled with the help of the LED Button Service. */
 #define LEDBUTTON_BUTTON                BSP_BUTTON_0                            /**< Button that will trigger the notification event with the LED Button Service */
-// #define GPIO_BUZZER_PIN NRF_GPIO_PIN_MAP(0, 6)
 #define GPIO_BUZZER_PIN                 8
 
 #define DEVICE_NAME                     "Tora_虎"                               /**< Name of device. Will be included in the advertising data. */
@@ -83,7 +85,8 @@
 #define APP_BLE_OBSERVER_PRIO           3                                       /**< Application's BLE observer priority. You shouldn't need to modify this value. */
 #define APP_BLE_CONN_CFG_TAG            1                                       /**< A tag identifying the SoftDevice BLE configuration. */
 
-#define APP_ADV_INTERVAL                800                                     /**< The advertising interval (in units of 0.625 ms; this value corresponds to 40 ms). */
+// 1600 for 1 second interval
+#define APP_ADV_INTERVAL                3200                                    /**< The advertising interval (in units of 0.625 ms; 64 corresponds to 40 ms). */
 #define APP_ADV_DURATION                BLE_GAP_ADV_TIMEOUT_GENERAL_UNLIMITED   /**< The advertising time-out (in units of seconds). When set to 0, we will never time out. */
 
 
@@ -599,16 +602,18 @@ int main(void)
     conn_params_init();
     gpio_init();
 
-    /*
-          [16]
-  [4] 4 x      o CLK
-  [5] 5 x      o D10
-  [6] 6 x      x 19 [19]
-  [7] 7 x      o 20 [--]
-  [8] 8 x      x 21 [21]
-  [?] 9 x      x  2 [?]
-  [-]10 x      x  3 [3]
-*/
+/* Found out this for the
+ * - GeeekPi nRF52840 Micro Dev Kit USB Dongle
+ *         (button)
+ *           [16]
+ *   [4] 4 x      o CLK
+ *   [5] 5 x      o D10
+ *   [6] 6 x      x 19 [19]
+ *   [7] 7 x      o 20 [--]
+ *   [8] 8 x      x 21 [21]
+ *   [?] 9 x      x  2 [?]
+ *   [-]10 x      x  3 [3]
+ */
 
     bsp_board_led_on(CONNECTED_LED);
     nrf_delay_ms(500);
