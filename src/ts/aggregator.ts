@@ -9,7 +9,7 @@ const apNames = Object.keys(config.accessPoints);
 
 let aggregates = {};
 
-class BeaconAggregator {
+export class BeaconAggregator {
   constructor(beaconConfig) {
     this.beaconConfig = beaconConfig;
     this._responsePools = {};
@@ -79,7 +79,7 @@ class BeaconAggregator {
 
     // Save the signal / update with best signal
     if (!pool[apName]) {
-      pool[apName] = { rssi, date: new Date() };
+      pool[apName] = {rssi, date: new Date()};
     } else if (rssi > pool[apName].rssi) {
       pool[apName].rssi = rssi;
     }
@@ -118,5 +118,3 @@ class BeaconAggregator {
     return this._tracker.newPosition(coords);
   }
 }
-
-module.exports = BeaconAggregator;

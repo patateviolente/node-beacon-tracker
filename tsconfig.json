@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "module": "commonjs",
+    "outDir": "dist",
+    "sourceMap": true
+  },
+  "files": [
+    "./node_modules/@types/node/http.d.ts",
+    "./node_modules/@types/node/fs.d.ts",
+    "./node_modules/@types/chai/index.d.ts",
+    "./node_modules/@types/mocha/index.d.ts",
+    "./node_modules/@types/proxyquire/index.d.ts",
+    "./node_modules/@types/sinon/index.d.ts"
+  ],
+  "include": [
+    "src/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}

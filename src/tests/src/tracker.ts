@@ -1,6 +1,6 @@
 const expect = require('chai').expect;
 
-const tracker = require('../../src/tracker');
+const tracker = require('../../ts/tracker');
 
 const config = require('../../config');
 

@@ -6,7 +6,7 @@ const expect = require('chai').expect;
 const trilateration = require('../../lib/trilateration');
 const utils = require('../../lib/utils');
 const Bpairing = require('../../lib/bpairing');
-const Aggregator = proxyquire('../../src/aggregator', {
+const Aggregator = proxyquire('../../ts/aggregator', {
   './tracker': function() {
     this.on = function() {}
   }

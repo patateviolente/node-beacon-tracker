@@ -2,11 +2,12 @@
   "name": "node-beacon-tracker",
   "version": "1.0.0",
   "description": "Triangulation node server for tracking moving targets",
-  "main": "index.js",
+  "main": "src/index.ts",
   "scripts": {
-    "start": "export TESTENV= ; node index",
-    "test": "export TESTENV=1 ; ./node_modules/mocha/bin/mocha tests/*",
-    "benchmark": "node ./benchmark.js"
+    "start": "export TESTENV= ; node src/index",
+    "test": "export TESTENV=1 ; ./node_modules/mocha/bin/mocha src/tests/*",
+    "benchmark": "node src/benchmark.js",
+    "tsc": "tsc"
   },
   "author": "violentpotato",
   "license": "ISC",
@@ -16,11 +17,17 @@
     "node-trilateration": "^1.0.0"
   },
   "devDependencies": {
+    "@types/chai": "^4.1.7",
+    "@types/mocha": "^5.2.7",
+    "@types/node": "^12.6.8",
+    "@types/proxyquire": "^1.3.28",
+    "@types/sinon": "^7.0.13",
     "chai": "^4.2.0",
     "jetty": "^0.2.1",
     "mocha": "^6.1.4",
     "proxyquire": "^2.1.0",
     "rewire": "^4.0.1",
-    "sinon": "^7.3.2"
+    "sinon": "^7.3.2",
+    "tslint-config-airbnb": "^5.11.1"
   }
 }

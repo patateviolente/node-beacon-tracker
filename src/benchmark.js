@@ -5,7 +5,7 @@ const http = require('http');
 const utils = require('./lib/utils');
 const config = require('./config');
 const BeaconScanner = require('./lib/bscanner');
-const role = require('./src/role');
+const role = require('./ts/role');
 
 const jetty = new Jetty(process.stdout);
 const stats = {};

@@ -3,8 +3,8 @@ const proxyquire = require('proxyquire');
 const sinon = require('sinon');
 const expect = require('chai').expect;
 
-const router = rewire('../../src/router');
-const role = rewire('../../src/role');
+const router = rewire('../../ts/router');
+const role = rewire('../../ts/role');
 
 describe('router', () => {
   it('should return 404 for unknown routes', async() => {
@@ -25,7 +25,7 @@ describe('router', () => {
   it('/notify/mac/rssi should report position', async() => {
     role.amIMaster = true;
     const byMacStub = sinon.stub();
-    const router = proxyquire('../../src/router', {
+    const router = proxyquire('../../ts/router', {
       './aggregator': { byMAC: byMacStub }
     });
     await router({ url: '/notify/pi2/11:22:33:aa:bb:cc/-60' });

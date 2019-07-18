@@ -1,14 +1,14 @@
-const Promise = require('bluebird');
+import * as Promise from 'bluebird'
 
-const config = require('../config');
-const role = require('../src/role');
-const utils = require('../lib/utils');
-const logger = require('../lib/logger');
-const Aggregator = require('./aggregator');
+import * as config from '../config';
+import * as role from './/role';
+import * as utils from '../lib/utils';
+import * as logger from '../lib/logger';
+import * as Aggregator from './aggregator';
 
-const HttpError = require('../lib/errors').HttpError;
+import HttpError from '../lib/errors';
 
-module.exports = function(req, res) {
+export function (req, res) {
   return Promise.try(() => {
     const url = req.url;
     if (url.startsWith('/notify/')) {
@@ -21,19 +21,19 @@ module.exports = function(req, res) {
         .then(output => res.end(JSON.stringify(output)));
     }
 
-    return notFound(req, res);
+    return notFound(req);
   })
     .then(json => (res && res.end(JSON.stringify(json)) || json))
     .catch((e) => {
       const code = e.code || 500;
       logger.error(`[${code}] ${req.url} ${e.message}`);
       if (res) {
-        res.writeHead(code, { 'content-type': 'application/json' });
+        res.writeHead(code, {'content-type': 'application/json'});
 
-        return res.end(JSON.stringify({ error: e.message }));
+        return res.end(JSON.stringify({error: e.message}));
       }
     });
-};
+}
 
 function notify(req) {
   return Promise.try(() => {

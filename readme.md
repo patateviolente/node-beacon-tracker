@@ -126,7 +126,7 @@ For this example:
 
 ### About RSSI and how to improve positioning
 The RSSI value is roughly generally between 0 (generally from -50 for a small passive non powerful beacon), and -100 (far).
-As the signal strength is measured in 3 dimensions, the strengh follow `x²`, see `tests/trilateration.js` to get a better idea.
+As the signal strength is measured in 3 dimensions, the strengh follow `x²`, see `tests/trilateration.ts` to get a better idea.
 
 If your Bluetooth beacon has inconstant strength, the position will wiggle. The example above is an inconstant beacon ; the result `-57x97 -58x55 -59x121` is not worrying for final positioning. But following `-64x67 -65x47` means that nearly a third of cases, your beacon will seem 2 time farther.
 

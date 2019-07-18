@@ -1,5 +1,5 @@
-const config = require('../config');
-const utils = require('../lib/utils');
+import * as  config from '../config';
+import * as utils from '../lib/utils';
 
 const whoami = process.env.WHOAMI;
 const accessPoint = process.env.TESTENV
@@ -10,9 +10,13 @@ if (!accessPoint) {
   utils.exit(`WHOAMI env variable is unkown (${whoami}), set value in ${Object.keys(config.accessPoints)}`);
 }
 
-module.exports = {
-  amIMaster: !!accessPoint.master,
-  amISlave: !accessPoint.master,
-  role: (accessPoint.master) ? 'master' : 'slave',
+const amIMaster = !!accessPoint.master;
+const amISlave = !accessPoint.master;
+const role = (accessPoint.master) ? 'master' : 'slave';
+
+export {
+  amIMaster,
+  amISlave,
+  role,
   whoami
 };

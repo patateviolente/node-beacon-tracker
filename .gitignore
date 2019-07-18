@@ -1,5 +1,5 @@
 /.idea
 /node_modules
 /package-lock.json
-/web/img/maps
-
+/src/web/img/maps
+/dist

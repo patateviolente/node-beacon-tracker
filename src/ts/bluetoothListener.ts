@@ -1,5 +1,5 @@
-const role = require('../src/role');
-const Aggregator = require('../src/aggregator');
+const role = require('.//role');
+const Aggregator = require('.//aggregator');
 const config = require('../config');
 
 const BeaconScanner = require('../lib/bscanner');
@@ -10,7 +10,12 @@ const scanner = new BeaconScanner();
 
 const lastSignalPerMac = {};
 
-module.exports.init = function() {
+export {
+  init,
+  scan
+};
+
+function init() {
   scanner.onSignal = (peripheral) => {
     const standardizedMac = utils.standardizeMac(peripheral.uuid);
 
@@ -35,13 +40,13 @@ module.exports.init = function() {
   scanner.startScan()
     .then(() => logger.log('Listener ready'))
     .catch(error => logger.error(error));
-};
+}
 
-module.exports.scan = () => {
+function scan() {
   return scanner.startScan()
     .then(() => logger.log('Listener ready'))
     .catch(error => logger.error(error));
-};
+}
 
 function informMaster(mac, rssi) {
   const masterUrl = `http://${config.masterIp}:${config.port}/notify/${role.whoami}/${mac}/${rssi}`;
