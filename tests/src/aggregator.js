@@ -130,7 +130,6 @@ describe('aggregator', () => {
       const newPositionStub = sinon.stub(aggregator._tracker, 'newPosition');
       const partialDataStub = sinon.stub(aggregator._tracker, 'partialData');
       aggregator.slaveReport('pi1', -50);
-      aggregator.slaveReport('pi2', -55);
       aggregator.aggregate();
       expect(aggregateSpy.callCount).to.equal(1);
       expect(findCoordinateStub.callCount).to.equal(0);

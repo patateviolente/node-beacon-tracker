@@ -18,18 +18,24 @@ const config = {
       pair: {
         service: '0000ff0000001000800000805f9b34fb',
         characteristic: '0000ff0100001000800000805f9b34fb',
-        enable: characteristic => characteristic.writeAsync(Buffer.from('03', 'hex'), false),
+        enable: characteristic => characteristic.writeAsync(Buffer.from('04', 'hex'), false),
         disable: characteristic => characteristic.writeAsync(Buffer.from('03', 'hex'), false)
       }
     }
   ],
   // Default aggregate values for beacons
   aggregate: {
-    timeout: 12000, // Maximum time we wait all ap measures in 'when_available' strategy
-    interval: 6500, // Time between each position event in 'continuous' strategy
+    timeout: 15000, // Maximum time we wait all ap measures in 'when_available' strategy
+    interval: 12000, // Time between each position event in 'continuous' strategy
     // 'when_available'  will process position when all ap has responded
     // 'continuous'      will process position every 'interval' time
-    strategy: 'continuous'
+    strategy: 'continuous',
+    // Will set a value when one AP is missing
+    approximate: [
+      { missing: 'pi1', rssi: -99 },
+      { missing: 'pi2', rssi: -99 },
+      { missing: 'pi3', rssi: -99 },
+    ]
   },
   accessPoints: {
     pi1: {

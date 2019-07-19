@@ -98,14 +98,7 @@ class BeaconAggregator {
       return;
     }
 
-    const missingAPs = apNames.reduce((missing, apName) => {
-      if (!pool[apName]) {
-        missing.push(apName);
-      }
-
-      return missing;
-    }, []);
-
+    const { missingAPs } = this._partialPosition(pool);
     clearTimeout(this._timeout);
     this._responsePools = {};
 
@@ -116,6 +109,30 @@ class BeaconAggregator {
     const coords = trilateration.findCoordinates(this.beaconConfig, pool);
 
     return this._tracker.newPosition(coords);
+  }
+
+  _partialPosition(pool) {
+    const approximateConfig = config.aggregate.approximate;
+    let missingAPs = apNames.reduce((missing, apName) => {
+      if (!pool[apName]) {
+        missing.push(apName);
+      }
+
+      return missing;
+    }, []);
+
+    if (missingAPs.length === 1) {
+      for (const approxConfig of approximateConfig) {
+        if (approxConfig.missing === missingAPs[0]) {
+          logger.log(`Faking ${approxConfig.missing} with ${approxConfig.rssi} - too far`);
+
+          pool[approxConfig.missing] = { rssi: approxConfig.rssi, date: new Date() };
+          missingAPs = [];
+        }
+      }
+    }
+
+    return { missingAPs }
   }
 }
 
