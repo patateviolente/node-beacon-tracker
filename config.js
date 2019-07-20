@@ -10,8 +10,8 @@ const config = {
       name: 'Tora_Nut',
       mac: '71:bc:23:4c:72:5b',
       reference: {
-        distance: 1,
-        rssi: { pi1: -54, pi2: -63, pi3: -64 }
+        distance: 5,
+        rssi: { pi1: -72, pi2: -79, pi3: -80 }
       },
 
       aggregate: { strategy: 'continuous' },
@@ -32,7 +32,7 @@ const config = {
     strategy: 'continuous',
     // Will set a value when one AP is missing
     approximate: [
-      { missing: 'pi3', rssi: -97 },
+      { missing: 'pi3', rssi: -95 },
     ]
   },
   accessPoints: {
