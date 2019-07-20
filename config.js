@@ -32,9 +32,7 @@ const config = {
     strategy: 'continuous',
     // Will set a value when one AP is missing
     approximate: [
-      { missing: 'pi1', rssi: -99 },
-      { missing: 'pi2', rssi: -99 },
-      { missing: 'pi3', rssi: -99 },
+      { missing: 'pi3', rssi: -97 },
     ]
   },
   accessPoints: {
