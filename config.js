@@ -47,7 +47,6 @@ const config = {
   },
   runawayBounds: [
     [[-Infinity, -Infinity], [-1, 8]],
-    [[9, -Infinity], [Infinity, 8]]
   ],
   dashboard: {
     enable: true,
