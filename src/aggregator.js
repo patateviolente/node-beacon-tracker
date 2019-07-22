@@ -78,10 +78,8 @@ class BeaconAggregator {
     }
 
     // Save the signal / update with best signal
-    if (!pool[apName]) {
-      pool[apName] = { rssi, date: new Date() };
-    } else if (rssi > pool[apName].rssi) {
-      pool[apName].rssi = rssi;
+    if (!pool[apName] || rssi > pool[apName]) {
+      pool[apName] = rssi;
     }
 
     if (this._strategy === 'when_available' && apNames.length === Object.keys(pool).length) {
@@ -103,12 +101,12 @@ class BeaconAggregator {
     this._responsePools = {};
 
     if (missingAPs.length) {
-      return this._tracker.partialData(missingAPs, pool);
+      return this._tracker.partialData(pool);
     }
 
     const coords = trilateration.findCoordinates(this.beaconConfig, pool);
 
-    return this._tracker.newPosition(coords);
+    return this._tracker.newPosition(coords, pool);
   }
 
   _partialPosition(pool) {
@@ -126,7 +124,7 @@ class BeaconAggregator {
         if (approxConfig.missing === missingAPs[0]) {
           logger.log(`Faking ${approxConfig.missing} with ${approxConfig.rssi} - too far`);
 
-          pool[approxConfig.missing] = { rssi: approxConfig.rssi, date: new Date() };
+          pool[approxConfig.missing] = approxConfig.rssi;
           missingAPs = [];
         }
       }

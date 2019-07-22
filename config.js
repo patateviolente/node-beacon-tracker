@@ -49,15 +49,8 @@ const config = {
     [[-Infinity, -Infinity], [-1, 8]],
   ],
   dashboard: {
-    enable: true,
     port: 5553,
-    map: {
-      src: 'img/maps/map.jpg',
-      xi: -22,
-      xf: 45.5,
-      yi: -6,
-      yf: 29.3,
-    }
+    base: '/home/pi/tracking/'
   }
 };
 

@@ -1,10 +1,11 @@
 const http = require('http');
 
 const config = require('../config');
+const role = require('../role');
 const logger = require('../lib/logger');
 
 module.exports.initServer = function() {
-  if (!config.dashboard.enable) {
+  if (!role.amIMaster) {
     return false;
   }
 

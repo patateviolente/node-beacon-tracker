@@ -93,9 +93,9 @@ describe('aggregator', () => {
       await Promise.delay(20);
       expect(aggregateStub.callCount).to.equal(1);
 
-      expect(aggregator._responsePools.pi1.rssi).to.equal(-45);
-      expect(aggregator._responsePools.pi2.rssi).to.equal(-55);
-      expect(aggregator._responsePools.pi3.rssi).to.equal(-60);
+      expect(aggregator._responsePools.pi1).to.equal(-45);
+      expect(aggregator._responsePools.pi2).to.equal(-55);
+      expect(aggregator._responsePools.pi3).to.equal(-60);
     });
   });
 
@@ -120,7 +120,7 @@ describe('aggregator', () => {
       expect(aggregator._responsePools).to.eql({});
       expect(findCoordinateStub.firstCall.args[0]).to.include.keys(['mac', 'reference']);
       expect(findCoordinateStub.firstCall.args[1]).to.have.keys(['pi1', 'pi2', 'pi3']);
-      expect(findCoordinateStub.firstCall.args[1].pi1.rssi).to.equal(-50);
+      expect(findCoordinateStub.firstCall.args[1].pi1).to.equal(-50);
       expect(newPositionStub.firstCall.args[0]).to.eql({ x: 10, y: 5 });
     });
 
