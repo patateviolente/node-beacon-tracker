@@ -22,7 +22,7 @@ class Exporter {
     this.liveLogsPath = path.join(os.tmpdir(), `${this.mac}.json`);
   }
 
-  append(pool, coordinates) {
+  append(data) {
     return Promise.try(() => {
       if (!this.activeDate) {
         return this.loadCurrent();
@@ -35,7 +35,7 @@ class Exporter {
     })
       .then(() => {
         this._hasUpdates = true;
-        this.activeData.push({ date: new Date(), pool, coordinates });
+        this.activeData.push({ date: new Date(), ...data });
 
         // Save into live logs
         return fs.writeFileAsync(this.liveLogsPath, JSON.stringify({ data: this.activeData }));

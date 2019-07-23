@@ -24,14 +24,14 @@ class Tracker {
   partialData(pool) {
     logger.log(`partial position ${JSON.stringify(pool)}`, 2);
 
-    return this.exporter.append(pool);
+    return this.exporter.append({ pool });
   }
 
   newPosition(coords, pool) {
-    return Promise.try(() => {
-      const distFromZone = this.bounds.distancefromZone(coords);
-      const isAllowed = distFromZone > 0;
+    const distFromZone = this.bounds.distancefromZone(coords);
+    const isAllowed = distFromZone > 0;
 
+    return Promise.try(() => {
       if (isAllowed) {
         logger.log(`Position ok ${JSON.stringify(coords)}`);
 
@@ -45,7 +45,7 @@ class Tracker {
 
       return this._alarm.play();
     })
-      .then(() => this.exporter.append(pool));
+      .then(() => this.exporter.append({ pool, coords, distFromZone }))
   }
 }
 
