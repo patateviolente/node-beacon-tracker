@@ -77,7 +77,7 @@ class Exporter {
     let filePath = path.join(this.base, fileName);
 
     // Live logs
-    if (customYyyymmdd && yyyymmdd === nowYYYYMMDD()) {
+    if (customYyyymmdd && customYyyymmdd === nowYYYYMMDD()) {
       filePath = this.liveLogsPath;
     }
 

@@ -34,8 +34,8 @@ module.exports.initServer = function() {
 function routeWeb(req) {
   return Promise.try(() => {
     const params = req.url.split('/');
-    if (!utils.isMac(params[1]) || !params[2].match(/^\d{8}$/)) {
-      throw new HttpError(400, `Expecting /aabbccddeeff/YYYYMMDD mac/date in ${req.url}`);
+    if (params.length !== 3 || !utils.isMac(params[1]) || !params[2].match(/^\d{8}$/)) {
+      throw new HttpError(400, `Expecting format /aabbccddeeff/YYYYMMDD mac/date in ${req.url}`);
     }
 
     logger.log(`Exporting ${req.url}`);
