@@ -37,19 +37,19 @@ describe('exporter', () => {
     await exporter.saveCurrent();
 
     expect(fs.existsSync(todayLog)).to.be.true;
-    expect(fs.readFileSync(todayLog, 'utf8')).to.equal('{"data":[{"pool":{"pi1":-62,"pi2":-62,"pi3":-78},"coordinates":{"x":5,"y":2}}]}');
+    expect(fs.readFileSync(todayLog, 'utf8')).to.have.string('"pool":{"pi1":-62,"pi2":-62,"pi3":-78},"coordinates":{"x":5,"y":2}');
   });
 
   it('should append to today log', async() => {
     fs.writeFileSync(todayLog, '{"data":[{"pool":{"pi1":-62,"pi2":-62,"pi3":-78},"coordinates":{"x":5,"y":2}}]}');
-    expect(fs.readFileSync(todayLog, 'utf8')).to.equal('{"data":[{"pool":{"pi1":-62,"pi2":-62,"pi3":-78},"coordinates":{"x":5,"y":2}}]}');
+    expect(fs.readFileSync(todayLog, 'utf8')).to.have.string('"pool":{"pi1":-62,"pi2":-62,"pi3":-78},"coordinates":{"x":5,"y":2}');
 
     exporter = new Exporter('aabbccddeeff', tmpdir);
-    await exporter.append({ pi1: -90 }, null);
+    await exporter.append({ pi1: -90 });
     await exporter.saveCurrent();
 
     expect(fs.existsSync(todayLog)).to.be.true;
-    expect(fs.readFileSync(todayLog, 'utf8')).to.equal('{"data":[{"pool":{"pi1":-62,"pi2":-62,"pi3":-78},"coordinates":{"x":5,"y":2}},{"pool":{"pi1":-90},"coordinates":null}]}');
+    expect(fs.readFileSync(todayLog, 'utf8')).to.have.string('"pool":{"pi1":-62,"pi2":-62,"pi3":-78},"coordinates":{"x":5,"y":2}');
   });
 
   it('should autosave today current logs', async() => {

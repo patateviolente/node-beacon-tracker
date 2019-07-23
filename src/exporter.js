@@ -35,7 +35,7 @@ class Exporter {
     })
       .then(() => {
         this._hasUpdates = true;
-        this.activeData.push({ pool, coordinates });
+        this.activeData.push({ date: new Date(), pool, coordinates });
 
         // Save into live logs
         return fs.writeFileAsync(this.liveLogsPath, JSON.stringify({ data: this.activeData }));
