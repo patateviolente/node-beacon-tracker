@@ -49,6 +49,7 @@ const config = {
     [[-Infinity, -Infinity], [-1, 8]],
   ],
   dashboard: {
+    autosaveInterval: 900 * 1000,
     port: 5553,
     base: '/home/pi/tracking/'
   }

@@ -48,6 +48,9 @@ class TrackerAlarm {
 
   _alarmOn(duration) {
     const pairConfig = this.beaconConfig.pair;
+    if (!pairConfig) {
+      return Promise.reject('pair config unset');
+    }
 
     return this.pair.getService(pairConfig.service)
       .then(service => this.pair.getCharacteristic(service, pairConfig.characteristic))
@@ -57,6 +60,9 @@ class TrackerAlarm {
 
   _alarmOff() {
     const pairConfig = this.beaconConfig.pair;
+    if (!pairConfig) {
+      return Promise.reject('pair config unset');
+    }
 
     return this.pair.getService(pairConfig.service)
       .then(service => this.pair.getCharacteristic(service, pairConfig.characteristic))

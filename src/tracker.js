@@ -12,7 +12,7 @@ const config = require('../config');
 class Tracker {
   constructor(peripheral, beaconConfig) {
     this.bounds = new RunawayBounds(config.runawayBounds);
-    this._exporter = new Exporter(peripheral && peripheral.uuid);
+    this.exporter = new Exporter(peripheral.uuid);
     this._alarm = new TrackerAlarm(peripheral, beaconConfig);
     this._eventEmitter = new events.EventEmitter();
   }
@@ -24,7 +24,7 @@ class Tracker {
   partialData(pool) {
     logger.log(`partial position ${JSON.stringify(pool)}`, 2);
 
-    return this._exporter.append(pool);
+    return this.exporter.append(pool);
   }
 
   newPosition(coords, pool) {
@@ -45,7 +45,7 @@ class Tracker {
 
       return this._alarm.play();
     })
-      .then(() => this._exporter.append(pool));
+      .then(() => this.exporter.append(pool));
   }
 }
 
