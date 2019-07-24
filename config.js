@@ -18,7 +18,7 @@ const config = {
       pair: {
         service: '0000ff0000001000800000805f9b34fb',
         characteristic: '0000ff0100001000800000805f9b34fb',
-        enable: characteristic => characteristic.writeAsync(Buffer.from('04', 'hex'), false),
+        enable: characteristic => characteristic.writeAsync(Buffer.from('03', 'hex'), false),
         disable: characteristic => characteristic.writeAsync(Buffer.from('03', 'hex'), false)
       }
     }
