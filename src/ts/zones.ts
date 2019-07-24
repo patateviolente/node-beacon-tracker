@@ -1,6 +1,6 @@
-const config = require('../config');
+import * as config from '../config';
 
-module.exports.isAllowed = function(xNew, yNew) {
+export function isAllowed(xNew, yNew) {
   const runawayBounds = config.runawayBounds;
   return runawayBounds.reduce((allowed, runawayBound) => {
     if (!allowed) {
@@ -9,7 +9,7 @@ module.exports.isAllowed = function(xNew, yNew) {
 
     return !inBounds(runawayBound, xNew, yNew);
   }, true);
-};
+}
 
 function inBounds(bounds, x, y) {
   return bounds[0][0] <= x

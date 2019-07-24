@@ -1,6 +1,6 @@
-const utils = require('./lib/utils');
+import * as utils from './lib/utils';
 
-const config = {
+export const config = {
   port: 5552,
   ble_throttle: 200,
   // Tora nRF52840  d2:be:73:87:70:db
@@ -10,26 +10,30 @@ const config = {
       name: 'Tora_Nut',
       mac: '71:bc:23:4c:72:5b',
       reference: {
-        distance: 1,
-        rssi: { pi1: -54, pi2: -63, pi3: -64 }
+        distance: 5,
+        rssi: { pi1: -72, pi2: -79, pi3: -80 }
       },
 
       aggregate: { strategy: 'continuous' },
       pair: {
         service: '0000ff0000001000800000805f9b34fb',
         characteristic: '0000ff0100001000800000805f9b34fb',
-        enable: characteristic => characteristic.writeAsync(Buffer.from('03', 'hex'), false),
+        enable: characteristic => characteristic.writeAsync(Buffer.from('04', 'hex'), false),
         disable: characteristic => characteristic.writeAsync(Buffer.from('03', 'hex'), false)
       }
     }
   ],
   // Default aggregate values for beacons
   aggregate: {
-    timeout: 12000, // Maximum time we wait all ap measures in 'when_available' strategy
-    interval: 6500, // Time between each position event in 'continuous' strategy
+    timeout: 15000, // Maximum time we wait all ap measures in 'when_available' strategy
+    interval: 12000, // Time between each position event in 'continuous' strategy
     // 'when_available'  will process position when all ap has responded
     // 'continuous'      will process position every 'interval' time
-    strategy: 'continuous'
+    strategy: 'continuous',
+    // Will set a value when one AP is missing
+    approximate: [
+      { missing: 'pi3', rssi: -92 },
+    ]
   },
   accessPoints: {
     pi1: {
@@ -38,23 +42,17 @@ const config = {
       x: 0.5,
       y: 8
     },
-    pi2: { x: 7.5, y: 9 },
-    pi3: { x: 0, y: 0 },
+    pi2: { x: 0, y: 0 },
+    pi3: { x: 7.5, y: 9 },
   },
   runawayBounds: [
     [[-Infinity, -Infinity], [-1, 8]],
-    [[9, -Infinity], [Infinity, 8]]
   ],
+  runawayCondition: pool => pool.pi2 > -95 && pool.pi3 > -95,
   dashboard: {
-    enable: true,
+    autosaveInterval: 900 * 1000,
     port: 5553,
-    map: {
-      src: 'img/maps/map.jpg',
-      xi: -22,
-      xf: 45.5,
-      yi: -6,
-      yf: 29.3,
-    }
+    base: '/home/pi/tracking/'
   }
 };
 
@@ -68,5 +66,3 @@ config.masterIp = config.accessPoints[config.mastersName].url;
 if (!config.masterIp) {
   utils.exit(`Cannot find master url un accessPoint definition`);
 }
-
-module.exports = config;

@@ -1,7 +1,7 @@
-const expect = require('chai').expect;
+import {expect} from 'chai';
 
-const config = require('../../config');
-const trilateration = require('../../lib/trilateration');
+import * as config from '../../config';
+import * as trilateration from '../../lib/trilateration';
 
 describe('Trilateration lib', () => {
   const originalAPConfig = config.accessPoints;
@@ -123,11 +123,7 @@ describe('Trilateration lib', () => {
         distance: 1,
         rssi: { ap1: -40, ap2: -42, ap3: -39 }
       }
-    }, {
-      ap1: { rssi: -40 },
-      ap2: { rssi: -42 },
-      ap3: { rssi: -39 }
-    });
+    }, { ap1: -40, ap2: -42, ap3: -39 });
     expect(coords).to.eql({ x: 3, y: 2 })
   });
 });

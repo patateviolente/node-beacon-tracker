@@ -1,7 +1,9 @@
-const Promise = require('bluebird');
-const noble = require('noble');
+import * as Promise from 'bluebird';
+import * as noble from 'noble';
 
-class BeaconScanner {
+global.Promise = Promise;
+
+export class BeaconScanner {
   constructor(filter = []) {
     this._filter = filter;
     this.onSignal = () => {
@@ -44,5 +46,3 @@ class BeaconScanner {
       });
   }
 }
-
-module.exports = BeaconScanner;

@@ -1,15 +1,18 @@
-const Promise = require('bluebird');
-const Jetty = require('jetty');
-const http = require('http');
+import * as Promise from 'bluebird';
+import * as Jetty from 'jetty';
+import * as http from 'http';
 
-const utils = require('./lib/utils');
-const config = require('./config');
-const BeaconScanner = require('./lib/bscanner');
-const role = require('./ts/role');
+import * as utils from './lib/utils';
+import * as BeaconScanner from './lib/bscanner';
+import * as role from './ts/role';
+
+import * as config from './config';
+
+global.Promise = Promise;
 
 const jetty = new Jetty(process.stdout);
 const stats = {};
-const definedDevices = config.beacons.map(({ mac }) => mac);
+const definedDevices = config.beacons.map(({mac}) => mac);
 
 const startTime = new Date();
 http.createServer(router).listen(config.port);
@@ -28,7 +31,7 @@ function listenLocalBeacons() {
   };
 
   scanner.startScan();
-};
+}
 
 
 // Listen slaves

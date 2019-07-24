@@ -8,7 +8,9 @@ import * as Aggregator from './aggregator';
 
 import HttpError from '../lib/errors';
 
-export function (req, res) {
+global.Promise = Promise;
+
+export function router(req, res) {
   return Promise.try(() => {
     const url = req.url;
     if (url.startsWith('/notify/')) {

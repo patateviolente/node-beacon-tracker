@@ -1,13 +1,15 @@
-const Promise = require('bluebird');
+import * as Promise from 'bluebird';
 
-const Bpairing = require('../lib/bpairing');
+import * as Bpairing from '../lib/bpairing';
+
+import * as logger from '../lib/logger';
 
 const maxBeepDuration = 10;
 const minBeepDuration = 5;
 
-const logger = require('../lib/logger');
+global.Promise = Promise;
 
-class TrackerAlarm {
+export class TrackerAlarm {
   constructor(peripheral, beaconConfig) {
     this.peripheral = peripheral;
     this.beaconConfig = beaconConfig;
@@ -48,6 +50,9 @@ class TrackerAlarm {
 
   _alarmOn(duration) {
     const pairConfig = this.beaconConfig.pair;
+    if (!pairConfig) {
+      return Promise.reject('pair config unset');
+    }
 
     return this.pair.getService(pairConfig.service)
       .then(service => this.pair.getCharacteristic(service, pairConfig.characteristic))
@@ -57,6 +62,9 @@ class TrackerAlarm {
 
   _alarmOff() {
     const pairConfig = this.beaconConfig.pair;
+    if (!pairConfig) {
+      return Promise.reject('pair config unset');
+    }
 
     return this.pair.getService(pairConfig.service)
       .then(service => this.pair.getCharacteristic(service, pairConfig.characteristic))
@@ -64,5 +72,3 @@ class TrackerAlarm {
       .then(characteristic => pairConfig.disable(characteristic));
   }
 }
-
-module.exports = TrackerAlarm;

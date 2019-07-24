@@ -1,6 +1,6 @@
-const expect = require('chai').expect;
+import {expect} from 'chai';
 
-const utils = require('../../lib/utils');
+import * as utils from '../../lib/utils';
 
 describe('utils lib', () => {
   it('isMac', () => {

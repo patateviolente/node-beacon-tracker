@@ -1,6 +1,8 @@
-const Promise = require('bluebird');
+import * as Promise from 'bluebird';
 
-class BluetoothPairing {
+global.Promise = Promise;
+
+export class BluetoothPairing {
   constructor(peripheral) {
     this.connected = false;
     this.peripheral = peripheral;
@@ -61,5 +63,3 @@ class BluetoothPairing {
     });
   }
 }
-
-module.exports = BluetoothPairing;

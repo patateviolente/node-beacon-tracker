@@ -1,7 +1,7 @@
-const sinon = require('sinon');
-const expect = require('chai').expect;
+import * as sinon from 'sinon';
+import {expect} from 'chai';
 
-const Bpairing = require('../../lib/bpairing');
+import * as Bpairing from '../../lib/bpairing';
 
 describe('aggregator', () => {
   let peripheralMock;
@@ -13,12 +13,13 @@ describe('aggregator', () => {
   beforeEach(() => {
     peripheralMock = {
       connect: callback => callback(),
-      discoverServices: () => {},
+      discoverServices: () => {
+      },
       disconnect: callback => callback(),
     };
   });
 
-  it('should connect /disconnect the peripheral', async() => {
+  it('should connect /disconnect the peripheral', async () => {
     peripheralMock.state = 'connected';
     peripheralMock.connect = sinon.spy(peripheralMock.connect);
     peripheralMock.disconnect = sinon.spy(peripheralMock.disconnect);

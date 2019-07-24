@@ -1,33 +1,33 @@
-const http = require('http');
+import * as http from 'http';
 
-const logger = require('./logger');
+import * as logger from './logger';
 
-module.exports.isMac = function(str) {
+export function isMac(str) {
   return /^([0-9a-f]{2}:?){6}$/i.test(str);
-};
+}
 
-module.exports.round = function(num, decimals = 2) {
+export function round(num, decimals = 2) {
   const pow = Math.pow(10, decimals);
   return Math.round(num * pow) / pow;
-};
+}
 
-module.exports.standardizeMac = function(str) {
+export function standardizeMac(str) {
   const noSpecialChar = String(str).toLowerCase()
     .replace(/:/g, '');
 
   return noSpecialChar.match(/.{2}/g).join(':');
-};
+}
 
-module.exports.isNumeric = function(n) {
+export function isNumeric(n) {
   return !isNaN(parseFloat(n)) && isFinite(n);
-};
+}
 
-module.exports.exit = function(message) {
+export function exit(message) {
   logger.error(message);
   process.exit(1);
-};
+}
 
-module.exports.getHttp = function(url) {
+export function getHttp(url) {
   return new Promise((resolve, reject) => {
     const request = http.get(url, (response) => {
       const bodyParts = [];
@@ -42,4 +42,4 @@ module.exports.getHttp = function(url) {
     });
     request.on('error', (err) => reject(err))
   });
-};
+}

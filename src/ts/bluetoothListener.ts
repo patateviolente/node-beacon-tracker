@@ -1,21 +1,16 @@
-const role = require('.//role');
-const Aggregator = require('.//aggregator');
-const config = require('../config');
+import * as role from './/role';
+import * as Aggregator from './aggregator';
+import * as config from '../config';
 
-const BeaconScanner = require('../lib/bscanner');
-const utils = require('../lib/utils');
-const logger = require('../lib/logger');
+import * as BeaconScanner from '../lib/bscanner';
+import * as utils from '../lib/utils';
+import * as logger from '../lib/logger';
 
-const scanner = new BeaconScanner();
+const scanner: BeaconScanner = new BeaconScanner();
 
 const lastSignalPerMac = {};
 
-export {
-  init,
-  scan
-};
-
-function init() {
+export function init() {
   scanner.onSignal = (peripheral) => {
     const standardizedMac = utils.standardizeMac(peripheral.uuid);
 
@@ -42,7 +37,7 @@ function init() {
     .catch(error => logger.error(error));
 }
 
-function scan() {
+export function scan() {
   return scanner.startScan()
     .then(() => logger.log('Listener ready'))
     .catch(error => logger.error(error));

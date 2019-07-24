@@ -5,7 +5,7 @@
   "main": "src/index.ts",
   "scripts": {
     "start": "export TESTENV= ; node src/index",
-    "test": "export TESTENV=1 ; ./node_modules/mocha/bin/mocha src/tests/*",
+    "test": "export TESTENV=1 ; ./node_modules/mocha/bin/mocha dist/tests/*",
     "benchmark": "node src/benchmark.js",
     "tsc": "tsc"
   },
@@ -17,6 +17,7 @@
     "node-trilateration": "^1.0.0"
   },
   "devDependencies": {
+    "@types/bluebird-global": "^3.5.12",
     "@types/chai": "^4.1.7",
     "@types/mocha": "^5.2.7",
     "@types/node": "^12.6.8",

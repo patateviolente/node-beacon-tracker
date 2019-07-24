@@ -1,34 +1,37 @@
-const rewire = require('rewire');
-const proxyquire = require('proxyquire');
-const sinon = require('sinon');
-const expect = require('chai').expect;
+import * as rewire from 'rewire';
+import * as proxyquire from 'proxyquire';
+import * as sinon from 'sinon';
+import {expect} from 'chai';
+
+import * as role from '../../ts/role';
 
 const router = rewire('../../ts/router');
-const role = rewire('../../ts/role');
 
 describe('router', () => {
-  it('should return 404 for unknown routes', async() => {
-    const notFoundSpy = sinon.spy(() => {});
+  it('should return 404 for unknown routes', async () => {
+    const notFoundSpy = sinon.spy(() => {
+    });
     router.__set__('notFound', notFoundSpy);
-    await router({ url: '/unknown' });
+    await router({url: '/unknown'});
     sinon.assert.calledOnce(notFoundSpy);
   });
 
-  it('/notify/mac/rssi should be unknown on a slave server', async() => {
+  it('/notify/mac/rssi should be unknown on a slave server', async () => {
     role.amIMaster = false;
-    const notFoundSpy = sinon.spy(() => {});
+    const notFoundSpy = sinon.spy(() => {
+    });
     router.__set__('notFound', notFoundSpy);
-    await router({ url: '/unknown' });
+    await router({url: '/unknown'});
     sinon.assert.calledOnce(notFoundSpy);
   });
 
-  it('/notify/mac/rssi should report position', async() => {
+  it('/notify/mac/rssi should report position', async () => {
     role.amIMaster = true;
     const byMacStub = sinon.stub();
     const router = proxyquire('../../ts/router', {
-      './aggregator': { byMAC: byMacStub }
+      './aggregator': {byMAC: byMacStub}
     });
-    await router({ url: '/notify/pi2/11:22:33:aa:bb:cc/-60' });
+    await router({url: '/notify/pi2/11:22:33:aa:bb:cc/-60'});
     sinon.assert.calledOnce(byMacStub);
     expect(byMacStub.firstCall.args).to.eql(['11:22:33:aa:bb:cc']);
   });

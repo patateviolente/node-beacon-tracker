@@ -1,10 +1,11 @@
-const utils = require('../lib/utils');
-const logger = require('../lib/logger');
-const trilateration = require('../lib/trilateration');
+import * as utils from '../lib/utils';
+import * as logger from '../lib/logger';
+import * as trilateration from '../lib/trilateration';
 
-const Tracker = require('./tracker');
+import * as Tracker from './tracker';
 
-const config = require('../config');
+import * as config from '../config';
+
 const apNames = Object.keys(config.accessPoints);
 
 let aggregates = {};
@@ -78,10 +79,8 @@ export class BeaconAggregator {
     }
 
     // Save the signal / update with best signal
-    if (!pool[apName]) {
-      pool[apName] = {rssi, date: new Date()};
-    } else if (rssi > pool[apName].rssi) {
-      pool[apName].rssi = rssi;
+    if (!pool[apName] || rssi > pool[apName]) {
+      pool[apName] = rssi;
     }
 
     if (this._strategy === 'when_available' && apNames.length === Object.keys(pool).length) {
@@ -98,7 +97,22 @@ export class BeaconAggregator {
       return;
     }
 
-    const missingAPs = apNames.reduce((missing, apName) => {
+    const { missingAPs } = this._partialPosition(pool);
+    clearTimeout(this._timeout);
+    this._responsePools = {};
+
+    if (missingAPs.length) {
+      return this._tracker.partialData(pool);
+    }
+
+    const coords = trilateration.findCoordinates(this.beaconConfig, pool);
+
+    return this._tracker.newPosition(coords, pool);
+  }
+
+  _partialPosition(pool) {
+    const approximateConfig = config.aggregate.approximate;
+    let missingAPs = apNames.reduce((missing, apName) => {
       if (!pool[apName]) {
         missing.push(apName);
       }
@@ -106,15 +120,17 @@ export class BeaconAggregator {
       return missing;
     }, []);
 
-    clearTimeout(this._timeout);
-    this._responsePools = {};
+    if (missingAPs.length === 1) {
+      for (const approxConfig of approximateConfig) {
+        if (approxConfig.missing === missingAPs[0]) {
+          logger.log(`Faking ${approxConfig.missing} with ${approxConfig.rssi} - too far`);
 
-    if (missingAPs.length) {
-      return this._tracker.partialData(missingAPs, pool);
+          pool[approxConfig.missing] = approxConfig.rssi;
+          missingAPs = [];
+        }
+      }
     }
 
-    const coords = trilateration.findCoordinates(this.beaconConfig, pool);
-
-    return this._tracker.newPosition(coords);
+    return { missingAPs }
   }
 }

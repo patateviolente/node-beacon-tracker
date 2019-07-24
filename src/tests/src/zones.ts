@@ -1,7 +1,7 @@
-const expect = require('chai').expect;
+import {expect} from 'chai';
 
-const config = require('../../config');
-const zones = require('../../ts/zones');
+import * as config from '../../config';
+import * as zones from '../../ts/zones';
 
 describe('zones', () => {
   it('should detect non allowed locations', () => {

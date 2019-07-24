@@ -1,4 +1,13 @@
 /**
+ * This file contains the source code based on Nordic blinky samples
+ * - All (4) leds are lighten up 250ms at boot
+ * - The BLE devices broadcast signal every 2 seconds
+ * - When connected to the device, the blue LED is lighten
+ * - When LED service receives 0x01, the GPIO_BUZZER_PIN and ALERT_LED are set to 3V
+ * - When disconnected or 0x00, pins / LEDS are off
+ */
+
+/**
  * Copyright (c) 2015 - 2018, Nordic Semiconductor ASA
  *
  * All rights reserved.
@@ -37,15 +46,6 @@
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
-/**
- * This file contains the source code based on Nordic blinky samples
- * - All (4) leds are lighten up 250ms at boot
- * - The BLE devices broadcast signal every 2 seconds
- * - When connected to the device, the blue LED is lighten
- * - When LED service receives 0x01, the GPIO_BUZZER_PIN and ALERT_LED are set to 3V
- * - When disconnected or 0x00, pins / LEDS are off
- */
-
 #include <stdint.h>
 #include <string.h>
 #include "nordic_common.h"

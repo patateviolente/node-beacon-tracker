@@ -1,27 +1,21 @@
 const logLevel = process.env.LOGLEVEL || 2;
 
-module.exports.log = function(message, level = 0) {
+export function log(message, level = 0) {
   if (level <= logLevel && !process.env.TESTENV) {
     console.log(`${timestamp()} ${message}`);
   }
-};
+}
 
-module.exports.error = function(message) {
+export function error(message) {
   if (!process.env.TESTENV) {
     console.error(`${timestamp()}[!!] ${message}`);
   }
-};
+}
 
 function timestamp() {
-  const now = new Date();
-
-  return `[${process.env.WHOAMI}][${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}.${pad(now.getMilliseconds(), 3)}]`;
+  return `[${process.env.WHOAMI}][${new Date().toISOString().substring(0, 23).replace(/[-]/g, '').replace('T', '-')}]`;
 }
 
-function pad(str, length = 2, char = '0') {
-  return char.repeat(length - `${str}`.length) + str;
-}
-
-module.exports.DEBUG = 2;
-module.exports.VERBOSE = 3;
-module.exports.EXPERIMENT = 4;
+export const DEBUG: number = 2;
+export const VERBOSE: number = 3;
+export const EXPERIMENT: number = 4;

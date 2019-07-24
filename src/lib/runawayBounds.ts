@@ -1,10 +1,10 @@
-const round = require('./utils').round;
+import round from './utils';
 
 /**
  * Handle an array of square bounds and enable to calculate nearest
  * distance to a limit
  */
-class RunawayBounds {
+export class RunawayBounds {
   /**
    * @param {Bound[]} bounds
    */
@@ -96,9 +96,6 @@ function distToSegment(p, a, b) {
 function dist2(v, w) {
   return Math.pow(v[0] - w[0], 2) + Math.pow(v[1] - w[1], 2);
 }
-
-module.exports = RunawayBounds;
-module.exports.inBound = inBound;
 
 /**
  * Square bounds, defined by two opposite point
