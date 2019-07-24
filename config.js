@@ -32,7 +32,7 @@ const config = {
     strategy: 'continuous',
     // Will set a value when one AP is missing
     approximate: [
-      { missing: 'pi3', rssi: -95 },
+      { missing: 'pi3', rssi: -92 },
     ]
   },
   accessPoints: {
@@ -48,6 +48,7 @@ const config = {
   runawayBounds: [
     [[-Infinity, -Infinity], [-1, 8]],
   ],
+  runawayCondition: pool => pool.pi2 > -95 && pool.pi3 > -95,
   dashboard: {
     autosaveInterval: 900 * 1000,
     port: 5553,

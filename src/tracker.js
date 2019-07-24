@@ -28,8 +28,11 @@ class Tracker {
   }
 
   newPosition(coords, pool) {
-    const distFromZone = this.bounds.distancefromZone(coords);
-    const isAllowed = distFromZone > 0;
+    let distFromZone = this.bounds.distancefromZone(coords);
+    if (distFromZone < 0 && config.runawayCondition(pool)) {
+      distFromZone = 0;
+    }
+    const isAllowed = distFromZone >= 0;
 
     return Promise.try(() => {
       if (isAllowed) {
