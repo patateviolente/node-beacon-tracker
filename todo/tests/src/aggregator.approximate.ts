@@ -2,10 +2,10 @@ import * as sinon from 'sinon';
 import * as proxyquire from 'proxyquire';
 import {expect} from 'chai';
 
-import * as trilateration from '../../lib/trilateration';
+import * as trilateration from '../../../src/lib/trilateration';
 import * as utils from '../../lib/utils';
 
-import * as config from '../../config';
+import {config} from '../../../src/config';
 
 const Aggregator = proxyquire('../../ts/aggregator', {
   './tracker': function () {

@@ -1,12 +1,12 @@
 import * as Promise from 'bluebird'
 
-import * as config from '../config';
+import {config} from '../../src/config';
 import * as role from './/role';
 import * as utils from '../lib/utils';
 import * as logger from '../lib/logger';
 import * as Aggregator from './aggregator';
 
-import HttpError from '../lib/errors';
+import HttpError from '../../src/lib/errors';
 
 global.Promise = Promise;
 

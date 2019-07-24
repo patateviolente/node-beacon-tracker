@@ -11,7 +11,7 @@ export function round(num, decimals = 2) {
   return Math.round(num * pow) / pow;
 }
 
-export function standardizeMac(str) {
+export function standardizeMac(str: String) {
   const noSpecialChar = String(str).toLowerCase()
     .replace(/:/g, '');
 
@@ -29,11 +29,11 @@ export function exit(message) {
 
 export function getHttp(url) {
   return new Promise((resolve, reject) => {
-    const request = http.get(url, (response) => {
+    const request: http.ClientRequest = http.get(url, (response) => {
       const bodyParts = [];
       response.on('data', (chunk) => bodyParts.push(chunk));
       response.on('end', () => {
-        const body = JSON.stringify(bodyParts.join(''));
+        const body: any = JSON.stringify(bodyParts.join(''));
 
         return body.error
           ? reject(new Error(body.error))

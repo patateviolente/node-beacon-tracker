@@ -1,6 +1,6 @@
 import {expect} from 'chai';
 
-import * as config from '../../config';
+import {config} from '../../config';
 import * as trilateration from '../../lib/trilateration';
 
 describe('Trilateration lib', () => {
@@ -113,21 +113,23 @@ describe('Trilateration lib', () => {
     // 2| - - - - - - -
     // 3| - x - o - x -
     config.accessPoints = {
-      ap1: { x: 3, y: 0 },
-      ap2: { x: 1, y: 2 },
-      ap3: { x: 5, y: 2 }
+      ap1: {x: 3, y: 0},
+      ap2: {x: 1, y: 2},
+      ap3: {x: 5, y: 2}
     };
     const coords = trilateration.findCoordinates({
       mac: '112233445566',
       reference: {
         distance: 1,
-        rssi: { ap1: -40, ap2: -42, ap3: -39 }
+        rssi: {ap1: -40, ap2: -42, ap3: -39}
       }
-    }, { ap1: -40, ap2: -42, ap3: -39 });
-    expect(coords).to.eql({ x: 3, y: 2 })
+    }, {ap1: -40, ap2: -42, ap3: -39});
+    expect(coords).to.eql({x: 3, y: 2})
   });
 });
 
-const fillRange = (start, end) => {
-  return Array(end - start + 1).fill().map((item, index) => start + index);
+const fillRange = (start: number, end: number) => {
+  // @ts-ignore
+  return Array(end - start + 1).fill()
+    .map((item, index) => start + index);
 };

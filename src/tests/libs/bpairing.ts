@@ -1,20 +1,17 @@
 import * as sinon from 'sinon';
 import {expect} from 'chai';
 
-import * as Bpairing from '../../lib/bpairing';
+import Bpairing from '../../lib/bpairing';
 
 describe('aggregator', () => {
   let peripheralMock;
 
-  afterEach(() => {
-    sinon.restore();
-  });
+  afterEach(() => sinon.restore());
 
   beforeEach(() => {
     peripheralMock = {
       connect: callback => callback(),
-      discoverServices: () => {
-      },
+      discoverServices: () => {},
       disconnect: callback => callback(),
     };
   });

@@ -4,7 +4,7 @@ import {expect} from 'chai';
 
 import * as Tracker from '../../ts/tracker';
 
-import * as config from '../../config';
+import {config} from '../../../src/config';
 
 describe('tracker', () => {
   const currentYYYYMMDD = new Date().toISOString().slice(0, 10).replace(/-/g, "");

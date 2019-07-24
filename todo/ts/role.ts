@@ -1,4 +1,4 @@
-import * as  config from '../config';
+import * as  config from '../../src/config';
 import * as utils from '../lib/utils';
 
 const whoami = process.env.WHOAMI;

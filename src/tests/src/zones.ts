@@ -1,7 +1,7 @@
 import {expect} from 'chai';
 
-import * as config from '../../config';
-import * as zones from '../../ts/zones';
+import {config} from '../../config';
+import * as zones from '../../src/zones';
 
 describe('zones', () => {
   it('should detect non allowed locations', () => {

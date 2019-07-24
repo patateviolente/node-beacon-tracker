@@ -2,12 +2,12 @@ import * as http from 'http';
 
 import * as Promise from 'bluebird';
 
-import * as config from '../config';
+import {config} from '../../src/config';
 import * as logger from '../lib/logger';
 import * as utils from '../lib/utils';
-import * as Exporter from './exporter';
+import * as Exporter from '../../src/src/exporter';
 
-import HttpError from '../lib/errors';
+import HttpError from '../../src/lib/errors';
 
 import * as role from './role';
 

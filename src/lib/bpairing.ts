@@ -2,7 +2,10 @@ import * as Promise from 'bluebird';
 
 global.Promise = Promise;
 
-export class BluetoothPairing {
+export default class BluetoothPairing {
+  private peripheral: any;
+  private connected: boolean;
+
   constructor(peripheral) {
     this.connected = false;
     this.peripheral = peripheral;

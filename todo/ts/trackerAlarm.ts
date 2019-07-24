@@ -1,6 +1,6 @@
 import * as Promise from 'bluebird';
 
-import * as Bpairing from '../lib/bpairing';
+import * as Bpairing from '../../src/lib/bpairing';
 
 import * as logger from '../lib/logger';
 

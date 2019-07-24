@@ -1,12 +1,12 @@
 import * as fs from 'fs';
 import * as os from 'os';
 
-import * as Promise from 'bluebird';
+import * as Bluebird from 'bluebird';
 import {expect} from 'chai';
 
-import * as Exporter from '../../ts/exporter';
+import Exporter from '../../src/exporter';
 
-import * as config from '../../config';
+import {config} from '../../config';
 
 describe('exporter', () => {
   const tmpdir = os.tmpdir();
@@ -61,7 +61,7 @@ describe('exporter', () => {
     await exporter.append({pool: {pi1: -62}});
 
     expect(fs.existsSync(todayLog)).to.be.false;
-    await Promise.delay(200);
+    await Bluebird.delay(200);
     expect(fs.existsSync(todayLog)).to.be.true;
   });
 });

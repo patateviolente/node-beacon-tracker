@@ -1,8 +1,8 @@
 import * as role from './/role';
 import * as Aggregator from './aggregator';
-import * as config from '../config';
+import {config} from '../../src/config';
 
-import * as BeaconScanner from '../lib/bscanner';
+import * as BeaconScanner from '../../src/lib/bscanner';
 import * as utils from '../lib/utils';
 import * as logger from '../lib/logger';
 
@@ -11,7 +11,7 @@ const scanner: BeaconScanner = new BeaconScanner();
 const lastSignalPerMac = {};
 
 export function init() {
-  scanner.onSignal = (peripheral) => {
+  scanner.on('signal', (peripheral) => {
     const standardizedMac = utils.standardizeMac(peripheral.uuid);
 
     if (!config.beaconsMac.includes(standardizedMac)) {
@@ -29,7 +29,7 @@ export function init() {
 
     return informMaster(standardizedMac, peripheral.rssi)
       .catch(err => logger.error(`Cannot inform master ${err.message}`));
-  };
+  });
 
   logger.log('...initializing bluetooth listener');
   scanner.startScan()

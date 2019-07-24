@@ -1,52 +1,57 @@
-import round from './utils';
+import {round} from './utils';
+
+type Point = [number, number];
+type Bound = [Point, Point];
+type Segment = [Point, Point];
+type Bounds = Bound[];
+type PointXY = {
+  x: number,
+  y: number,
+}
 
 /**
  * Handle an array of square bounds and enable to calculate nearest
  * distance to a limit
  */
-export class RunawayBounds {
-  /**
-   * @param {Bound[]} bounds
-   */
-  constructor(bounds) {
+export default class RunawayBounds {
+  private bounds: Bounds;
+  private segments: Segment[];
+
+  constructor(bounds: Bounds) {
     this.bounds = bounds;
-    this.segments = bounds.reduce((segments, bound) => {
-      return segments.concat(boundsToSegments(bound));
+    this.segments = bounds.reduce((segments: Segment[], bound: Bound): Segment[] => {
+      return segments.concat(boundToSegments(bound));
     }, []);
   }
 
-  inZone(point) {
-    return this.bounds.reduce((forbidden, bound) => {
-      return forbidden || inBound(bound, stdPoint(point));
+  inZone(anyPoint: Point | PointXY): boolean {
+    const point: Point = castPoint(anyPoint);
+
+    return this.bounds.reduce((forbidden, bound): boolean => {
+      return forbidden || inBound(bound, point);
     }, false);
   }
 
-  /**
-   * Rounded distance to a zone
-   * @param {Point} point
-   * @return {Number} Negative distance if the point is inside a zone
-   */
-  distancefromZone(point) {
+  distancefromZone(anyPoint: Point | PointXY): number {
+    const point: Point = castPoint(anyPoint);
     const inZone = this.inZone(point);
-    const borderDistance = Math.min(...this.segments.map((segment) => {
-      return distToSegment(stdPoint(point), segment[0], segment[1]);
+    const borderDistance = Math.min(...this.segments.map((segment: Segment): number => {
+      return distToSegment(point, segment[0], segment[1]);
     }));
 
     return round(borderDistance * (inZone ? -1 : 1));
   }
 }
 
-/**
- * @param point
- * @return {Point}
- */
-function stdPoint(point) {
-  return (point.hasOwnProperty('x') && point.hasOwnProperty('y'))
-    ? [point.x, point.y]
-    : point;
+function castPoint(point: Point | PointXY): Point {
+  if (point.hasOwnProperty('x') && point.hasOwnProperty('y')) {
+    return [(point as PointXY).x, (point as PointXY).y];
+  }
+
+  return point as Point;
 }
 
-function inBound(bounds, position) {
+function inBound(bounds: Bound, position: Point): boolean {
   const xPos = [bounds[0][0], bounds[1][0]];
   const yPos = [bounds[0][1], bounds[1][1]];
 
@@ -59,33 +64,28 @@ function inBound(bounds, position) {
 /**
  * Create segments from a square defined by two points.
  * Infinite values are set to a bug number
- * @param z
- * @return {*[][][]}
+ * @param z The bound
  */
-function boundsToSegments(z) {
-  const a = [approxInfinity(z[0][0]), approxInfinity(z[0][1])];
-  const c = [approxInfinity(z[1][0]), approxInfinity(z[1][1])];
-  const b = [a[0], c[1]];
-  const d = [c[0], a[1]];
+function boundToSegments(z: Bound): Segment[] {
+  const a: Point = [approxInfinity(z[0][0]), approxInfinity(z[0][1])];
+  const c: Point = [approxInfinity(z[1][0]), approxInfinity(z[1][1])];
+  const b: Point = [a[0], c[1]];
+  const d: Point = [c[0], a[1]];
+
   return [[a, b], [b, c], [c, d], [a, d]]
 }
 
-function approxInfinity(number) {
+function approxInfinity(number: number): number {
   if (number === Infinity) return 1000000;
   if (number === -Infinity) return -1000000;
   return number;
 }
 
-/**
- * Distance from a point to a segment
- * @param {Point} p Point
- * @param {Point} a Segment point A
- * @param {Point} b Segment Point B
- * @return {number|*}
- */
-function distToSegment(p, a, b) {
+function distToSegment(p: Point, a: Point, b: Point): number {
   const l2 = dist2(a, b);
-  if (l2 === 0) return dist2(p, a);
+  if (l2 === 0) {
+    return dist2(p, a);
+  }
 
   let t = ((p[0] - a[0]) * (b[0] - a[0]) + (p[1] - a[1]) * (b[1] - a[1])) / l2;
   t = Math.max(0, Math.min(1, t));
@@ -93,16 +93,6 @@ function distToSegment(p, a, b) {
   return Math.sqrt(dist2(p, [a[0] + t * (b[0] - a[0]), a[1] + t * (b[1] - a[1])]));
 }
 
-function dist2(v, w) {
+function dist2(v: Point, w: Point): number {
   return Math.pow(v[0] - w[0], 2) + Math.pow(v[1] - w[1], 2);
 }
-
-/**
- * Square bounds, defined by two opposite point
- * @typedef {[Point, Point]} Bound
- */
-
-/**
- * Simple point
- * @typedef {[Number, Number]} Point
- */

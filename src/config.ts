@@ -1,6 +1,6 @@
 import * as utils from './lib/utils';
 
-export const config = {
+export const config: any = {
   port: 5552,
   ble_throttle: 200,
   // Tora nRF52840  d2:be:73:87:70:db
@@ -11,10 +11,10 @@ export const config = {
       mac: '71:bc:23:4c:72:5b',
       reference: {
         distance: 5,
-        rssi: { pi1: -72, pi2: -79, pi3: -80 }
+        rssi: {pi1: -72, pi2: -79, pi3: -80}
       },
 
-      aggregate: { strategy: 'continuous' },
+      aggregate: {strategy: 'continuous'},
       pair: {
         service: '0000ff0000001000800000805f9b34fb',
         characteristic: '0000ff0100001000800000805f9b34fb',
@@ -32,7 +32,7 @@ export const config = {
     strategy: 'continuous',
     // Will set a value when one AP is missing
     approximate: [
-      { missing: 'pi3', rssi: -92 },
+      {missing: 'pi3', rssi: -92},
     ]
   },
   accessPoints: {
@@ -42,8 +42,8 @@ export const config = {
       x: 0.5,
       y: 8
     },
-    pi2: { x: 0, y: 0 },
-    pi3: { x: 7.5, y: 9 },
+    pi2: {x: 0, y: 0},
+    pi3: {x: 7.5, y: 9},
   },
   runawayBounds: [
     [[-Infinity, -Infinity], [-1, 8]],

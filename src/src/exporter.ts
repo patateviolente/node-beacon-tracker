@@ -2,29 +2,38 @@ import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
 
-import * as Promise from 'bluebird';
+import * as Bluebird from 'bluebird';
 
 import * as logger from '../lib/logger';
-import * as config from '../config';
+import {config} from '../config';
 
-global.Promise = Promise;
+const readFileAsync = Bluebird.promisify(fs.readFile);
+const writeFileAsync = Bluebird.promisify(fs.writeFile);
 
-fs.readFileAsync = Promise.promisify(fs.readFile);
-fs.writeFileAsync = Promise.promisify(fs.writeFile);
+type ExportRow = any;
+type ExportData = ExportRow[];
 
-export class Exporter {
+export default class Exporter {
+  private mac: string;
+  private base: string;
+  private activeDate: string;
+  private activeData: ExportData;
+  private hasUpdates: boolean;
+  private interval: any;
+  private liveLogsPath: string;
+
   constructor(mac, base = config.dashboard.base) {
     this.mac = mac;
     this.base = base;
     this.activeDate = null;
     this.activeData = [];
-    this._hasUpdates = false;
-    this._interval = null;
+    this.hasUpdates = false;
+    this.interval = null;
     this.liveLogsPath = path.join(os.tmpdir(), `${this.mac}.json`);
   }
 
-  append(data) {
-    return Promise.try(() => {
+  append(data: ExportRow): Bluebird<unknown> {
+    return Bluebird.try(() => {
       if (!this.activeDate) {
         return this.loadCurrent();
       }
@@ -35,47 +44,49 @@ export class Exporter {
       }
     })
       .then(() => {
-        this._hasUpdates = true;
+        this.hasUpdates = true;
         this.activeData.push({date: new Date(), ...data});
 
         // Save into live logs
-        return fs.writeFileAsync(this.liveLogsPath, JSON.stringify({data: this.activeData}));
+        // @ts-ignore
+        return writeFileAsync(this.liveLogsPath, JSON.stringify({data: this.activeData}));
       });
   }
 
-  loadCurrent() {
+  loadCurrent(): Promise<ExportData> {
     return this.load()
       .then((activeData) => {
         this.activeDate = nowYYYYMMDD();
         this.activeData = activeData;
-        this._interval = setInterval(() => this.saveCurrent(), config.dashboard.autosaveInterval);
+        this.interval = setInterval(() => this.saveCurrent(), config.dashboard.autosaveInterval);
 
         return this.activeData;
       })
   }
 
-  async close() {
-    if (this._hasUpdates) {
+  async close(): Promise<void> {
+    if (this.hasUpdates) {
       await this.saveCurrent();
     }
 
-    this._hasUpdates = false;
-    clearInterval(this._interval);
+    this.hasUpdates = false;
+    clearInterval(this.interval);
   }
 
-  saveCurrent() {
+  saveCurrent(): Promise<void> {
     const fileName = `${this.mac}-${this.activeDate}.json`;
     const filePath = path.join(this.base, fileName);
     const fileData = JSON.stringify({data: this.activeData});
     logger.log(`Saving file ${filePath}`);
 
-    return fs.writeFileAsync(filePath, fileData);
+    // @ts-ignore
+    return writeFileAsync(filePath, fileData);
   }
 
-  load(customYyyymmdd) {
-    const yyyymmdd = nowYYYYMMDD() || customYyyymmdd;
-    const fileName = `${this.mac}-${yyyymmdd}.json`;
-    let filePath = path.join(this.base, fileName);
+  load(customYyyymmdd ?: string): Promise<ExportData> {
+    const yyyymmdd: string = nowYYYYMMDD() || customYyyymmdd;
+    const fileName: string = `${this.mac}-${yyyymmdd}.json`;
+    let filePath: string = path.join(this.base, fileName);
 
     // Live logs
     if (customYyyymmdd && customYyyymmdd === nowYYYYMMDD()) {
@@ -83,7 +94,8 @@ export class Exporter {
     }
 
     return this.close()
-      .then(() => fs.readFileAsync(filePath, 'utf8'))
+    // @ts-ignore
+      .then(() => readFileAsync(filePath, 'utf8'))
       .then(rawData => JSON.parse(rawData))
       .then((json) => json.data || [])
       .catch(() => []);

@@ -1,23 +1,29 @@
-import * as Promise from 'bluebird';
+import * as Bluebird from 'bluebird';
 import * as noble from 'noble';
 
-global.Promise = Promise;
+const startScanningAsync = Promise.promisify(noble.startScanning);
 
 export class BeaconScanner {
-  constructor(filter = []) {
-    this._filter = filter;
-    this.onSignal = () => {
+  private filter: [string];
+  private _on: any;
+
+  constructor(filter ?: [string]) {
+    this.filter = filter;
+    this.on = {
+      signal: () => {}
     };
-    this._is_scanning = false;
-    noble.startScanningAsync = Promise.promisify(noble.startScanning);
+  }
+
+  on(eventName: string, callback: Function) {
+    this._on[eventName] = callback;
   }
 
   startScan() {
-    return this._init()
+    return this.init()
       .then(() => this._prepareScan());
   }
 
-  _init() {
+  private init() {
     if (noble.state === 'poweredOn') {
       return Promise.resolve();
     }
@@ -34,15 +40,15 @@ export class BeaconScanner {
   }
 
   _prepareScan() {
-    return noble.startScanningAsync([], true)
+    // @ts-ignore
+    return startScanningAsync([], true)
       .then(() => {
         noble.removeAllListeners('discover');
         noble.on('discover', (peripheral) => {
-          if (!this._filter.length || this._filter.includes(peripheral.uuid)) {
-            this.onSignal(peripheral);
+          if (!this.filter.length || this.filter.includes(peripheral.uuid)) {
+            this.on['signal'](peripheral);
           }
         });
-        this._is_scanning = true;
       });
   }
 }

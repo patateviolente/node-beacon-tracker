@@ -1,10 +1,10 @@
 import * as utils from '../lib/utils';
 import * as logger from '../lib/logger';
-import * as trilateration from '../lib/trilateration';
+import * as trilateration from '../../src/lib/trilateration';
 
 import * as Tracker from './tracker';
 
-import * as config from '../config';
+import {config} from '../../src/config';
 
 const apNames = Object.keys(config.accessPoints);
 

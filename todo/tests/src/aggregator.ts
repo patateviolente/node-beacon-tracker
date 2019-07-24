@@ -3,7 +3,7 @@ import * as sinon from 'sinon';
 import * as proxyquire from 'proxyquire';
 import {expect} from 'chai';
 
-import * as trilateration from '../../lib/trilateration';
+import * as trilateration from '../../../src/lib/trilateration';
 import * as utils from '../../lib/utils';
 
 const Aggregator = proxyquire('../../ts/aggregator', {
@@ -13,7 +13,7 @@ const Aggregator = proxyquire('../../ts/aggregator', {
   }
 });
 
-import config from '../../config';
+import config from '../../../src/config';
 
 const beaconMac = utils.standardizeMac('71:bc:23:4c:72:5b');
 

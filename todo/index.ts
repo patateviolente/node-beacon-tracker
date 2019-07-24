@@ -7,7 +7,7 @@ import * as web from './ts/web';
 import * as Aggregator from './ts/aggregator';
 
 import * as logger from './lib/logger';
-import * as config from './config';
+import {config} from '../src/config';
 
 logger.log(`Listening on ${config.port} as ${roles.whoami} (${roles.role})`);
 

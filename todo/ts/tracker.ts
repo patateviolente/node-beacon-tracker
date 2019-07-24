@@ -3,11 +3,11 @@ import * as events from 'events';
 import * as Promise from 'bluebird';
 
 import * as TrackerAlarm from './trackerAlarm';
-import * as Exporter from './exporter';
+import * as Exporter from '../../src/src/exporter';
 
 import * as logger from '../lib/logger';
-import * as RunawayBounds from '../lib/runawayBounds';
-import * as config from '../config';
+import * as RunawayBounds from '../../src/lib/runawayBounds';
+import {config} from '../../src/config';
 
 global.Promise = Promise;
 
