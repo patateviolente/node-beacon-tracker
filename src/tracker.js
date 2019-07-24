@@ -28,8 +28,10 @@ class Tracker {
   }
 
   newPosition(coords, pool) {
+    let logInfo = '';
     let distFromZone = this.bounds.distancefromZone(coords);
     if (distFromZone < 0 && !config.runawayCondition(pool)) {
+      logInfo = 'imprecise';
       distFromZone = 0;
     }
     const isAllowed = distFromZone >= 0;
@@ -45,10 +47,11 @@ class Tracker {
       logger.log(`Forbidden position ${JSON.stringify(coords)}`);
       const timing = this._alarm.updateTiming(distFromZone);
       this._eventEmitter.emit('alarm', timing.beepDuration);
+      logInfo = `alarm ${timing.beepDuration}s}`;
 
       return this._alarm.play();
     })
-      .then(() => this.exporter.append({ pool, coords, distFromZone }))
+      .then(() => this.exporter.append({ pool, coords, distFromZone, logInfo }))
   }
 }
 

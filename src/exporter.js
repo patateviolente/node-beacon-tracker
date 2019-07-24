@@ -72,7 +72,7 @@ class Exporter {
   }
 
   load(customYyyymmdd) {
-    const yyyymmdd = nowYYYYMMDD() || customYyyymmdd;
+    const yyyymmdd = customYyyymmdd || nowYYYYMMDD();
     const fileName = `${this.mac}-${yyyymmdd}.json`;
     let filePath = path.join(this.base, fileName);
 
