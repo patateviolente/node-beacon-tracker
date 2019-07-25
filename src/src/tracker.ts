@@ -29,9 +29,12 @@ export default class Tracker extends EventEmitter {
     return this.exporter.append({pool});
   }
 
+
   newPosition(coords, pool) {
+    let logInfo = '';
     let distFromZone = this.bounds.distancefromZone(coords);
-    if (distFromZone < 0 && config.runawayCondition(pool)) {
+    if (distFromZone < 0 && !config.runawayCondition(pool)) {
+      logInfo = 'imprecise';
       distFromZone = 0;
     }
     const isAllowed = distFromZone >= 0;
@@ -47,9 +50,10 @@ export default class Tracker extends EventEmitter {
       logger.log(`Forbidden position ${JSON.stringify(coords)}`);
       const timing = this.alarm.updateTiming(distFromZone);
       this.emit('alarm', timing.beepDuration);
+      logInfo = `alarm ${timing.beepDuration}s}`;
 
       return this.alarm.play();
     })
-      .then(() => this.exporter.append({pool, coords, distFromZone}))
+      .then(() => this.exporter.append({pool, coords, distFromZone, logInfo}))
   }
 }

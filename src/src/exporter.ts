@@ -84,7 +84,7 @@ export default class Exporter {
   }
 
   load(customYyyymmdd ?: string): Promise<ExportData> {
-    const yyyymmdd: string = nowYYYYMMDD() || customYyyymmdd;
+    const yyyymmdd: string = customYyyymmdd || nowYYYYMMDD();
     const fileName: string = `${this.mac}-${yyyymmdd}.json`;
     let filePath: string = path.join(this.base, fileName);
 
