@@ -4,7 +4,7 @@
   "description": "Triangulation node server for tracking moving targets",
   "main": "src/index.ts",
   "scripts": {
-    "start": "export TESTENV= ; node src/index",
+    "start": "export TESTENV= ; node dist/index.js",
     "test": "export TESTENV=1 ; ./node_modules/mocha/bin/mocha dist/tests/*",
     "benchmark": "node src/benchmark.js",
     "tsc": "tsc"

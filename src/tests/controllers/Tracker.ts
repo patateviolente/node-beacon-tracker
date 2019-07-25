@@ -2,7 +2,7 @@ import * as fs from 'fs';
 
 import {expect} from 'chai';
 
-import Tracker from '../../src/tracker';
+import Tracker from '../../controllers/Tracker';
 
 import {config} from '../../config';
 

@@ -2,8 +2,8 @@ import {EventEmitter} from 'events';
 
 import * as Promise from 'bluebird';
 
-import TrackerAlarm from './trackerAlarm';
-import Exporter from './exporter';
+import TrackerAlarm from './TrackerAlarm';
+import Exporter from './Exporter';
 
 import * as logger from '../lib/logger';
 import RunawayBounds from '../lib/runawayBounds';

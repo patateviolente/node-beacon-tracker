@@ -1,21 +1,22 @@
 import * as Promise from 'bluebird';
 import * as sinon from 'sinon';
-import * as proxyquire from 'proxyquire';
 import {expect} from 'chai';
 
 import * as trilateration from '../../lib/trilateration';
 import * as utils from '../../lib/utils';
 
 import {config} from '../../config';
-
-const {default: Aggregator} = proxyquire('../../src/aggregator', {
-  './tracker': function () {
-    this.on = function () {
-    }
-  }
-});
+import * as trackerPackage from "../../controllers/Tracker";
+import {EventEmitter} from "events";
+import Aggregator from '../../controllers/Aggregator';
 
 const beaconMac = utils.standardizeMac('71:bc:23:4c:72:5b');
+
+class StubbedTracker extends EventEmitter {
+  public newPosition() {}
+
+  public partialData() {}
+}
 
 describe('aggregator', () => {
   let aggregator;
@@ -25,12 +26,14 @@ describe('aggregator', () => {
   });
 
   beforeEach(() => {
+    sinon.stub(trackerPackage, 'default')
+      .callsFake(() => new StubbedTracker());
     aggregator.addPeripheral(null);
-    aggregator._responsePools = {};
+    aggregator.responsePools = {};
   });
   afterEach(() => {
     sinon.restore();
-    aggregator._resetTimers();
+    aggregator.resetTimers();
   });
 
   describe('slaveReport - "when_available" strategy', () => {
@@ -94,9 +97,9 @@ describe('aggregator', () => {
       await Promise.delay(20);
       expect(aggregateStub.callCount).to.equal(1);
 
-      expect(aggregator._responsePools.pi1).to.equal(-45);
-      expect(aggregator._responsePools.pi2).to.equal(-55);
-      expect(aggregator._responsePools.pi3).to.equal(-60);
+      expect(aggregator.responsePools.pi1).to.equal(-45);
+      expect(aggregator.responsePools.pi2).to.equal(-55);
+      expect(aggregator.responsePools.pi3).to.equal(-60);
     });
   });
 
@@ -109,8 +112,8 @@ describe('aggregator', () => {
       const findCoordinateStub = sinon.stub(trilateration, 'findCoordinates')
         .returns({x: 10, y: 5});
       const aggregateSpy = sinon.spy(aggregator, 'aggregate');
-      const newPositionStub = sinon.stub(aggregator._tracker, 'newPosition');
-      const partialDataStub = sinon.stub(aggregator._tracker, 'partialData');
+      const newPositionStub = sinon.stub(aggregator.tracker, 'newPosition');
+      const partialDataStub = sinon.stub(aggregator.tracker, 'partialData');
       aggregator.slaveReport('pi1', -50);
       aggregator.slaveReport('pi2', -55);
       aggregator.slaveReport('pi3', -60);
@@ -118,7 +121,7 @@ describe('aggregator', () => {
       expect(findCoordinateStub.callCount).to.equal(1);
       expect(newPositionStub.callCount).to.equal(1);
       expect(partialDataStub.callCount).to.equal(0);
-      expect(aggregator._responsePools).to.eql({});
+      expect(aggregator.responsePools).to.eql({});
       expect(findCoordinateStub.firstCall.args[0]).to.include.keys(['mac', 'reference']);
       expect(findCoordinateStub.firstCall.args[1]).to.have.keys(['pi1', 'pi2', 'pi3']);
       expect(findCoordinateStub.firstCall.args[1].pi1).to.equal(-50);
@@ -128,15 +131,15 @@ describe('aggregator', () => {
     it('should call incompleteData callback where AP response are missing', () => {
       const findCoordinateStub = sinon.stub(trilateration, 'findCoordinates');
       const aggregateSpy = sinon.spy(aggregator, 'aggregate');
-      const newPositionStub = sinon.stub(aggregator._tracker, 'newPosition');
-      const partialDataStub = sinon.stub(aggregator._tracker, 'partialData');
+      const newPositionStub = sinon.stub(aggregator.tracker, 'newPosition');
+      const partialDataStub = sinon.stub(aggregator.tracker, 'partialData');
       aggregator.slaveReport('pi1', -50);
       aggregator.aggregate();
       expect(aggregateSpy.callCount).to.equal(1);
       expect(findCoordinateStub.callCount).to.equal(0);
       expect(newPositionStub.callCount).to.equal(0);
       expect(partialDataStub.callCount).to.equal(1);
-      expect(aggregator._responsePools).to.eql({});
+      expect(aggregator.responsePools).to.eql({});
     });
   });
 });

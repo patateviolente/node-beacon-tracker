@@ -2,14 +2,14 @@ import * as http from 'http';
 
 import * as Promise from 'bluebird';
 
-import {config} from '../../src/config';
+import {config} from '../config';
 import * as logger from '../lib/logger';
 import * as utils from '../lib/utils';
-import * as Exporter from '../../src/src/exporter';
+import Exporter from './Exporter';
 
-import HttpError from '../../src/lib/errors';
+import {HttpError} from '../lib/errors';
 
-import * as role from '../../src/src/role';
+import * as role from './role';
 
 global.Promise = Promise;
 
@@ -20,14 +20,14 @@ export function initServer() {
 
   http.createServer((req, res) => {
     return routeWeb(req)
-      .then(json => (res && res.end(JSON.stringify(json)) || json))
+      .then(json => res.end(JSON.stringify(json)))
       .catch((e) => {
         const code = e.code || 500;
         logger.error(`[${code}] ${req.url} ${e.message}`);
         if (res) {
-          res.writeHead(code, { 'content-type': 'application/json' });
+          res.writeHead(code, {'content-type': 'application/json'});
 
-          return res.end(JSON.stringify({ error: e.message }));
+          return res.end(JSON.stringify({error: e.message}));
         }
       });
   }).listen(config.dashboard.port);

@@ -1,8 +1,9 @@
+import * as Bluebird from 'bluebird';
 import * as noble from 'noble';
 
-const startScanningAsync = Promise.promisify(noble.startScanning);
+const startScanningAsync = Bluebird.promisify(noble.startScanning);
 
-export class BeaconScanner {
+export default class BeaconScanner {
   private filter: string[];
   private events: any;
 

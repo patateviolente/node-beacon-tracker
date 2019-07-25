@@ -1,35 +1,40 @@
+import {EventEmitter} from 'events';
+
 import * as sinon from 'sinon';
-import * as proxyquire from 'proxyquire';
 import {expect} from 'chai';
 
 import * as trilateration from '../../lib/trilateration';
 import * as utils from '../../lib/utils';
 
+import Aggregator from '../../controllers/Aggregator';
+import * as trackerPackage from '../../controllers/Tracker';
+
 import {config} from '../../config';
 
-const {default: Aggregator} = proxyquire('../../src/aggregator', {
-  './tracker': function () {
-    this.on = function () {}
-  }
-});
-
 const beaconMac = utils.standardizeMac('71:bc:23:4c:72:5b');
+
+class StubbedTracker extends EventEmitter {
+  public newPosition() {}
+
+  public partialData() {}
+}
 
 describe('aggregator - approximate', () => {
   let aggregator;
   before(() => {
-    console.log(Aggregator);
     Aggregator.instantiateAll();
     aggregator = Aggregator.byMAC(beaconMac);
   });
 
   beforeEach(() => {
+    sinon.stub(trackerPackage, 'default')
+      .callsFake(() => new StubbedTracker());
     aggregator.addPeripheral(null);
     aggregator._responsePools = {};
   });
   afterEach(() => {
     sinon.restore();
-    aggregator._resetTimers();
+    aggregator.resetTimers();
   });
 
   describe('slaveReport - "when_available" strategy', () => {
@@ -41,8 +46,8 @@ describe('aggregator - approximate', () => {
       const findCoordinateStub = sinon.stub(trilateration, 'findCoordinates')
         .returns({x: 10, y: 5});
       const aggregateSpy = sinon.spy(aggregator, 'aggregate');
-      const newPositionStub = sinon.stub(aggregator._tracker, 'newPosition');
-      const partialDataStub = sinon.stub(aggregator._tracker, 'partialData');
+      const newPositionStub = sinon.stub(aggregator.tracker, 'newPosition');
+      const partialDataStub = sinon.stub(aggregator.tracker, 'partialData');
       aggregator.slaveReport('pi1', -50);
       aggregator.slaveReport('pi2', -55);
       aggregator.aggregate();

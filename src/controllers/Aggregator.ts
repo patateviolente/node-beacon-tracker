@@ -2,7 +2,7 @@ import * as utils from '../lib/utils';
 import * as logger from '../lib/logger';
 import * as trilateration from '../lib/trilateration';
 
-import Tracker from './tracker';
+import Tracker from './Tracker';
 
 import {config} from '../config';
 import Timeout = NodeJS.Timeout;
@@ -54,7 +54,7 @@ export default class Aggregator {
 
       // When alarm is ringing, devices is paired and no position can be emitted
       tracker.on('alarm', (alarmDuration) => {
-        this._resetTimers();
+        this.resetTimers();
         logger.log(`inhibit aggregator for ${alarmDuration} seconds`, logger.DEBUG);
         setTimeout(() => this.setStrategy(), alarmDuration * 1000);
       });
@@ -65,7 +65,7 @@ export default class Aggregator {
 
   setStrategy(strategy: Strategy = this.aggregateConfig.strategy) {
     this.currentStrategy = strategy;
-    this._resetTimers();
+    this.resetTimers();
     this.responsePools = {};
     logger.log(`strategy set to ${strategy}`);
 
@@ -74,7 +74,7 @@ export default class Aggregator {
     }
   }
 
-  _resetTimers() {
+  private resetTimers() {
     clearTimeout(this.timeout);
     clearInterval(this.interval);
     this.responsePools = {};

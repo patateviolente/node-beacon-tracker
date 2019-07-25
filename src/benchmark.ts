@@ -1,18 +1,17 @@
-import * as Promise from 'bluebird';
+import * as Bluebird from 'bluebird';
 import * as Jetty from 'jetty';
 import * as http from 'http';
 
 import * as utils from './lib/utils';
-import * as BeaconScanner from '../src/lib/bscanner';
-import * as role from '../src/src/role';
+import BeaconScanner from './lib/bscanner';
+import * as role from './controllers/role';
 
-import {config} from '../src/config';
-
-global.Promise = Promise;
+import {config} from './config';
 
 const jetty = new Jetty(process.stdout);
 const stats = {};
 const definedDevices = config.beacons.map(({mac}) => mac);
+let lastShow = null;
 
 const startTime = new Date();
 http.createServer(router).listen(config.port);
@@ -22,21 +21,20 @@ listenLocalBeacons();
 // Listen master
 function listenLocalBeacons() {
   const scanner = new BeaconScanner();
-  scanner.onSignal = (peripheral) => {
+  scanner.on('signal', (peripheral) => {
     const standardizedMac = utils.standardizeMac(peripheral.uuid);
     if (config.beaconsMac.includes(standardizedMac)) {
       const masterUrl = `http://${config.masterIp}:${config.port}/notify/${role.whoami}/${standardizedMac}/${peripheral.rssi}`;
       return utils.getHttp(masterUrl);
     }
-  };
+  });
 
   scanner.startScan();
 }
 
-
 // Listen slaves
 function router(req, res) {
-  return Promise.try(() => {
+  return Bluebird.try(() => {
     const url = req.url;
     res.end('{}');
     if (url.startsWith('/notify/')) {
@@ -61,10 +59,10 @@ function router(req, res) {
 }
 
 function showStats() {
-  if (this.lastShow && ((new Date()).getTime() - this.lastShow.getTime()) < 1000) {
+  if (lastShow && ((new Date()).getTime() - lastShow.getTime()) < 1000) {
     return;
   }
-  this.lastShow = new Date();
+  lastShow = new Date();
 
   let line = 0;
   const elaspedSeconds = Math.round((new Date().getTime() - startTime.getTime()) / 1000);
@@ -83,7 +81,7 @@ function showStats() {
       }, {});
       const formattedGroupRssi = Object.keys(groupRssi).reduce((str, rssi) => {
         return `${str} ${rssi}x${groupRssi[rssi]}`;
-      }, '')
+      }, '');
       const avg = Math.round(apRssi.reduce((sum, rssi) => sum + rssi, 0) / apRssi.length);
       const min = apRssi[0];
       const rate = Math.round((apRssi.length / elaspedSeconds) * 100) / 100;

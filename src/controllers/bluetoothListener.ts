@@ -1,10 +1,11 @@
-import * as role from './/role';
-import * as Aggregator from '../../src/src/aggregator';
-import {config} from '../../src/config';
+import Aggregator from './Aggregator';
 
-import * as BeaconScanner from '../../src/lib/bscanner';
+import BeaconScanner from '../lib/bscanner';
 import * as utils from '../lib/utils';
 import * as logger from '../lib/logger';
+
+import * as role from './role';
+import {config} from '../config';
 
 const scanner: BeaconScanner = new BeaconScanner();
 

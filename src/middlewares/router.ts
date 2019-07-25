@@ -1,16 +1,16 @@
 import * as Promise from 'bluebird'
 
-import {config} from '../../src/config';
-import * as role from './/role';
+import {config} from '../config';
+import * as role from '../controllers/role';
 import * as utils from '../lib/utils';
 import * as logger from '../lib/logger';
-import * as Aggregator from '../../src/src/aggregator';
+import Aggregator from '../controllers/Aggregator';
 
-import HttpError from '../../src/lib/errors';
+import {HttpError} from '../lib/errors';
 
 global.Promise = Promise;
 
-export function router(req, res) {
+export default function route(req, res) {
   return Promise.try(() => {
     const url = req.url;
     if (url.startsWith('/notify/')) {
@@ -56,3 +56,8 @@ function notify(req) {
 function notFound(req) {
   throw new HttpError(404, `Route ${req.url} unknown`);
 }
+
+export const __testing__ = {
+  notify,
+  notFound
+};

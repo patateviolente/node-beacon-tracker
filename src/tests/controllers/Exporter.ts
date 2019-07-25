@@ -4,7 +4,7 @@ import * as os from 'os';
 import * as Bluebird from 'bluebird';
 import {expect} from 'chai';
 
-import Exporter from '../../src/exporter';
+import Exporter from '../../controllers/Exporter';
 
 import {config} from '../../config';
 

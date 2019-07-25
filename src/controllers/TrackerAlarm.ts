@@ -49,7 +49,7 @@ export default class TrackerAlarm {
   }
 
   _restartListener() {
-    const bluetoothListener = require('../../todo/ts/bluetoothListener');
+    const bluetoothListener = require('./bluetoothListener');
 
     return bluetoothListener.scan();
   }
