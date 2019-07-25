@@ -1,32 +1,31 @@
 import * as Promise from 'bluebird';
 
-import Bpairing from '../lib/bpairing';
+import Bpairing from '../lib/BluetoothPairing';
 
 import * as logger from '../lib/logger';
 import {Peripheral} from "noble";
+
+import {BeaconConfig} from '../config';
 
 const maxBeepDuration = 10;
 const minBeepDuration = 5;
 
 export default class TrackerAlarm {
   private peripheral: Peripheral;
-  private beaconConfig: any;
+  private beaconConfig: BeaconConfig;
   private pair: Bpairing;
-  private timing: any;
+  private alarmDuration: number;
 
-  // TODO create interface for config.beaconConfig
-  constructor(peripheral, beaconConfig: any) {
+  constructor(peripheral, beaconConfig: BeaconConfig) {
     this.peripheral = peripheral;
     this.beaconConfig = beaconConfig;
     this.pair = new Bpairing(this.peripheral);
   }
 
-  // TODO simplify timing / beepDuration
-  updateTiming(distance) {
-    this.timing = {};
-    this.timing.beepDuration = Math.max(Math.min(distance / 2, maxBeepDuration), minBeepDuration);
+  updateAlarmDuration(distance) {
+    const alarmDuration = Math.max(Math.min(distance / 2, maxBeepDuration), minBeepDuration);
 
-    return this.timing;
+    return alarmDuration;
   }
 
   play() {
@@ -35,12 +34,12 @@ export default class TrackerAlarm {
 
       return this.pair.connect();
     })
-      .then(() => this._alarmOn(this.timing.beepDuration))
-      .delay(this.timing.beepDuration * 1000)
-      .then(() => this._alarmOff())
+      .then(() => this.alarmOn(this.alarmDuration))
+      .delay(this.alarmDuration * 1000)
+      .then(() => this.alarmOff())
       .catch(logger.error)
       .finally(() => this.stop()
-        .then(() => this._restartListener()));
+        .then(() => this.restartListener()));
   }
 
   stop() {
@@ -48,13 +47,13 @@ export default class TrackerAlarm {
       .catch(logger.error);
   }
 
-  _restartListener() {
+  private restartListener() {
     const bluetoothListener = require('./bluetoothListener');
 
     return bluetoothListener.scan();
   }
 
-  _alarmOn(duration) {
+  private alarmOn(duration) {
     const pairConfig = this.beaconConfig.pair;
     if (!pairConfig) {
       return Promise.reject('pair config unset');
@@ -62,11 +61,11 @@ export default class TrackerAlarm {
 
     return this.pair.getService(pairConfig.service)
       .then(service => this.pair.getCharacteristic(service, pairConfig.characteristic))
-      .tap(() => logger.log(`[P] play alarm for ${duration} seconds`, logger.DEBUG))
+      .tap(() => logger.log(`[P] play alarm for ${duration} seconds`, logger.LOGLEVEL.DEBUG))
       .then(characteristic => pairConfig.enable(characteristic));
   }
 
-  _alarmOff() {
+  private alarmOff() {
     const pairConfig = this.beaconConfig.pair;
     if (!pairConfig) {
       return Promise.reject('pair config unset');
@@ -74,7 +73,7 @@ export default class TrackerAlarm {
 
     return this.pair.getService(pairConfig.service)
       .then(service => this.pair.getCharacteristic(service, pairConfig.characteristic))
-      .tap(() => logger.log('[-] stop alarm', logger.DEBUG))
+      .tap(() => logger.log('[-] stop alarm', logger.LOGLEVEL.DEBUG))
       .then(characteristic => pairConfig.disable(characteristic));
   }
 }

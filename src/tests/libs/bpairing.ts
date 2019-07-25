@@ -1,7 +1,7 @@
 import * as sinon from 'sinon';
 import {expect} from 'chai';
 
-import Bpairing from '../../lib/bpairing';
+import Bpairing from '../../lib/BluetoothPairing';
 
 describe('aggregator', () => {
   let peripheralMock;

@@ -9,6 +9,11 @@ import Aggregator from './controllers/Aggregator';
 
 import * as logger from './lib/logger';
 import {config} from './config';
+import * as envUtils from "./utils/env";
+
+if (!config.masterIp) {
+  envUtils.exit(`Cannot find master url in accessPoint definition`);
+}
 
 logger.log(`Listening on ${config.port} as ${roles.whoami} (${roles.role})`);
 

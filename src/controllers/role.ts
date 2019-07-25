@@ -1,5 +1,5 @@
 import {config} from '../config';
-import * as utils from '../lib/utils';
+import * as envUtils from '../utils/env';
 
 const whoami = process.env.WHOAMI;
 const accessPoint = process.env.TESTENV
@@ -7,7 +7,7 @@ const accessPoint = process.env.TESTENV
   : config.accessPoints[whoami];
 
 if (!accessPoint) {
-  utils.exit(`WHOAMI env variable is unkown (${whoami}), set value in ${Object.keys(config.accessPoints)}`);
+  envUtils.exit(`WHOAMI env variable is unkown (${whoami}), set value in ${Object.keys(config.accessPoints)}`);
 }
 
 const amIMaster = !!accessPoint.master;

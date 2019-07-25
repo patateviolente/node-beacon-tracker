@@ -1,4 +1,4 @@
-import * as utils from '../lib/utils';
+import * as utils from '../utils/strings';
 import * as logger from '../lib/logger';
 import * as trilateration from '../lib/trilateration';
 
@@ -12,17 +12,24 @@ const apNames = Object.keys(config.accessPoints);
 
 let aggregates = {};
 
-enum Strategy {
+export enum Strategies {
   continuous = 'continuous',
   when_available = 'when_available'
 }
+
+export type AggregateConfig = {
+  timeout: number,
+  interval: number,
+  strategy: Strategies,
+  approximate: { missing: string, rssi: number }[]
+};
 
 export default class Aggregator {
   private responsePools: { [apName: string]: string; };
   private timeout: Timeout;
   private interval: Timeout;
   private beaconConfig: any;
-  private currentStrategy: Strategy;
+  private currentStrategy: Strategies;
   private tracker: Tracker;
   private aggregateConfig: any;
 
@@ -55,7 +62,7 @@ export default class Aggregator {
       // When alarm is ringing, devices is paired and no position can be emitted
       tracker.on('alarm', (alarmDuration) => {
         this.resetTimers();
-        logger.log(`inhibit aggregator for ${alarmDuration} seconds`, logger.DEBUG);
+        logger.log(`inhibit aggregator for ${alarmDuration} seconds`, logger.LOGLEVEL.DEBUG);
         setTimeout(() => this.setStrategy(), alarmDuration * 1000);
       });
 
@@ -63,7 +70,7 @@ export default class Aggregator {
     }
   }
 
-  setStrategy(strategy: Strategy = this.aggregateConfig.strategy) {
+  setStrategy(strategy: Strategies = this.aggregateConfig.strategy) {
     this.currentStrategy = strategy;
     this.resetTimers();
     this.responsePools = {};

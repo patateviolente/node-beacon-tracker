@@ -2,8 +2,11 @@ import * as Bluebird from 'bluebird';
 import * as Jetty from 'jetty';
 import * as http from 'http';
 
-import * as utils from './lib/utils';
-import BeaconScanner from './lib/bscanner';
+import * as utils from './utils/strings';
+import * as httpUtils from './utils/http';
+
+import BeaconScanner from './lib/BeaconScanner';
+
 import * as role from './controllers/role';
 
 import {config} from './config';
@@ -25,7 +28,7 @@ function listenLocalBeacons() {
     const standardizedMac = utils.standardizeMac(peripheral.uuid);
     if (config.beaconsMac.includes(standardizedMac)) {
       const masterUrl = `http://${config.masterIp}:${config.port}/notify/${role.whoami}/${standardizedMac}/${peripheral.rssi}`;
-      return utils.getHttp(masterUrl);
+      return httpUtils.getURL(masterUrl);
     }
   });
 

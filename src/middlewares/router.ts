@@ -2,7 +2,7 @@ import * as Promise from 'bluebird'
 
 import {config} from '../config';
 import * as role from '../controllers/role';
-import * as utils from '../lib/utils';
+import * as utils from '../utils/strings';
 import * as logger from '../lib/logger';
 import Aggregator from '../controllers/Aggregator';
 
@@ -19,7 +19,7 @@ export default function route(req, res) {
       }
 
       return notify(req)
-        .tap(output => logger.log(`[200] ${req.url} ${output || ''}`, logger.VERBOSE))
+        .tap(output => logger.log(`[200] ${req.url} ${output || ''}`, logger.LOGLEVEL.VERBOSE))
         .then(output => res.end(JSON.stringify(output)));
     }
 

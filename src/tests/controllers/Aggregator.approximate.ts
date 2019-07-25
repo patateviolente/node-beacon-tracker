@@ -4,14 +4,14 @@ import * as sinon from 'sinon';
 import {expect} from 'chai';
 
 import * as trilateration from '../../lib/trilateration';
-import * as utils from '../../lib/utils';
+import * as stringUtils from '../../utils/strings';
 
 import Aggregator from '../../controllers/Aggregator';
 import * as trackerPackage from '../../controllers/Tracker';
 
 import {config} from '../../config';
 
-const beaconMac = utils.standardizeMac('71:bc:23:4c:72:5b');
+const beaconMac = stringUtils.standardizeMac('71:bc:23:4c:72:5b');
 
 class StubbedTracker extends EventEmitter {
   public newPosition() {}

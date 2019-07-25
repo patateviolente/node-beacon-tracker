@@ -1,8 +1,10 @@
 import Aggregator from './Aggregator';
 
-import BeaconScanner from '../lib/bscanner';
-import * as utils from '../lib/utils';
+import BeaconScanner from '../lib/BeaconScanner';
 import * as logger from '../lib/logger';
+
+import * as httpUtils from '../utils/http';
+import * as stringUtils from '../utils/strings';
 
 import * as role from './role';
 import {config} from '../config';
@@ -13,15 +15,15 @@ const lastSignalPerMac = {};
 
 export function init() {
   scanner.on('signal', (peripheral) => {
-    const standardizedMac = utils.standardizeMac(peripheral.uuid);
+    const standardizedMac = stringUtils.standardizeMac(peripheral.uuid);
 
     if (!config.beaconsMac.includes(standardizedMac)) {
-      return logger.log(`Non registered peripheral ${standardizedMac} ${peripheral.rssi}`, logger.EXPERIMENT);
+      return logger.log(`Non registered peripheral ${standardizedMac} ${peripheral.rssi}`, logger.LOGLEVEL.EXPERIMENT);
     }
 
     const tooManySignals = (lastSignalPerMac[standardizedMac] || new Date()) + config.ble_throttle > new Date();
     if (tooManySignals) {
-      return logger.log(`Throttle signal ${standardizedMac} ${peripheral.rssi}`, logger.EXPERIMENT);
+      return logger.log(`Throttle signal ${standardizedMac} ${peripheral.rssi}`, logger.LOGLEVEL.EXPERIMENT);
     }
 
     lastSignalPerMac[standardizedMac] = new Date();
@@ -46,7 +48,7 @@ export function scan() {
 
 function informMaster(mac, rssi) {
   const masterUrl = `http://${config.masterIp}:${config.port}/notify/${role.whoami}/${mac}/${rssi}`;
-  logger.log(`Beacon found - call master ${masterUrl}`, role.amIMaster ? logger.EXPERIMENT : logger.VERBOSE);
+  logger.log(`Beacon found - call master ${masterUrl}`, role.amIMaster ? logger.LOGLEVEL.EXPERIMENT : logger.LOGLEVEL.VERBOSE);
 
-  return utils.getHttp(masterUrl);
+  return httpUtils.getURL(masterUrl);
 }

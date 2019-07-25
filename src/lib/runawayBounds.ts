@@ -1,10 +1,10 @@
-import {round} from './utils';
+import {round} from '../utils/strings';
 
-type Point = [number, number];
-type Bound = [Point, Point];
-type Segment = [Point, Point];
-type Bounds = Bound[];
-type PointXY = {
+export type Point = [number, number];
+export type Segment = [Point, Point];
+export type Bound = [Point, Point];
+export type Bounds = Bound[];
+export type PointXY = {
   x: number,
   y: number,
 }

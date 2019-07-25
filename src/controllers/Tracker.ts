@@ -48,9 +48,9 @@ export default class Tracker extends EventEmitter {
 
       // Update alert timing
       logger.log(`Forbidden position ${JSON.stringify(coords)}`);
-      const timing = this.alarm.updateTiming(distFromZone);
-      this.emit('alarm', timing.beepDuration);
-      logInfo = `alarm ${timing.beepDuration}s}`;
+      const alarmDuration = this.alarm.updateAlarmDuration(distFromZone);
+      this.emit('alarm', alarmDuration);
+      logInfo = `alarm ${alarmDuration}s}`;
 
       return this.alarm.play();
     })

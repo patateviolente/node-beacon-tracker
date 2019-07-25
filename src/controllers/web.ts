@@ -4,7 +4,7 @@ import * as Promise from 'bluebird';
 
 import {config} from '../config';
 import * as logger from '../lib/logger';
-import * as utils from '../lib/utils';
+import * as utils from '../utils/strings';
 import Exporter from './Exporter';
 
 import {HttpError} from '../lib/errors';

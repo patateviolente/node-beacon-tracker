@@ -16,6 +16,8 @@ function timestamp() {
   return `[${process.env.WHOAMI}][${new Date().toISOString().substring(0, 23).replace(/[-]/g, '').replace('T', '-')}]`;
 }
 
-export const DEBUG: number = 2;
-export const VERBOSE: number = 3;
-export const EXPERIMENT: number = 4;
+export enum LOGLEVEL {
+  DEBUG = 2,
+  VERBOSE = 3,
+  EXPERIMENT = 4,
+}

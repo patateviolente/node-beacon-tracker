@@ -3,7 +3,7 @@ import * as sinon from 'sinon';
 import {expect} from 'chai';
 
 import * as trilateration from '../../lib/trilateration';
-import * as utils from '../../lib/utils';
+import * as utils from '../../utils/strings';
 
 import {config} from '../../config';
 import * as trackerPackage from "../../controllers/Tracker";

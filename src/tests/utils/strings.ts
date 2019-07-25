@@ -1,6 +1,6 @@
 import {expect} from 'chai';
 
-import * as utils from '../../lib/utils';
+import * as utils from '../../utils/strings';
 
 describe('utils lib', () => {
   it('isMac', () => {
