@@ -4,7 +4,7 @@ import * as http from 'http';
 
 import * as utils from './lib/utils';
 import * as BeaconScanner from '../src/lib/bscanner';
-import * as role from './ts/role';
+import * as role from '../src/src/role';
 
 import {config} from '../src/config';
 

@@ -3,7 +3,7 @@ import * as proxyquire from 'proxyquire';
 import * as sinon from 'sinon';
 import {expect} from 'chai';
 
-import * as role from '../../ts/role';
+import * as role from '../../../src/src/role';
 
 const router = rewire('../../ts/router');
 

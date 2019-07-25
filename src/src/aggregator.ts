@@ -1,23 +1,36 @@
 import * as utils from '../lib/utils';
 import * as logger from '../lib/logger';
-import * as trilateration from '../../src/lib/trilateration';
+import * as trilateration from '../lib/trilateration';
 
-import * as Tracker from './tracker';
+import Tracker from './tracker';
 
-import {config} from '../../src/config';
+import {config} from '../config';
+import Timeout = NodeJS.Timeout;
+import {Peripheral} from "noble";
 
 const apNames = Object.keys(config.accessPoints);
 
 let aggregates = {};
 
-export class BeaconAggregator {
-  constructor(beaconConfig) {
+enum Strategy {
+  continuous = 'continuous',
+  when_available = 'when_available'
+}
+
+export default class Aggregator {
+  private responsePools: { [apName: string]: string; };
+  private timeout: Timeout;
+  private interval: Timeout;
+  private beaconConfig: any;
+  private currentStrategy: Strategy;
+  private tracker: Tracker;
+  private aggregateConfig: any;
+
+  constructor(beaconConfig: any) {
     this.beaconConfig = beaconConfig;
-    this._responsePools = {};
-    this._timeout = null;
-    this._continuousInterval = null;
-    this._strategy = config.aggregate.strategy;
-    this._tracker = null;
+    this.responsePools = {};
+    this.currentStrategy = config.aggregate.strategy;
+    this.tracker = null;
     this.aggregateConfig = Object.assign({}, config.aggregate, beaconConfig.aggregate || {});
 
     this.setStrategy();
@@ -29,53 +42,51 @@ export class BeaconAggregator {
 
   static instantiateAll() {
     aggregates = config.beacons.reduce((aggregates, beaconConfig) => {
-      aggregates[beaconConfig.mac] = new BeaconAggregator(beaconConfig);
+      aggregates[beaconConfig.mac] = new Aggregator(beaconConfig);
 
       return aggregates;
     }, {});
   }
 
-  addPeripheral(peripheral) {
-    if (!this._tracker) {
+  addPeripheral(peripheral: Peripheral) {
+    if (!this.tracker) {
       const tracker = new Tracker(peripheral, this.beaconConfig);
 
       // When alarm is ringing, devices is paired and no position can be emitted
       tracker.on('alarm', (alarmDuration) => {
         this._resetTimers();
         logger.log(`inhibit aggregator for ${alarmDuration} seconds`, logger.DEBUG);
-
-        // TODO move this into a new event
         setTimeout(() => this.setStrategy(), alarmDuration * 1000);
       });
 
-      this._tracker = tracker;
+      this.tracker = tracker;
     }
   }
 
-  setStrategy(strategy = this.aggregateConfig.strategy) {
-    this._strategy = strategy;
+  setStrategy(strategy: Strategy = this.aggregateConfig.strategy) {
+    this.currentStrategy = strategy;
     this._resetTimers();
-    this._responsePools = {};
+    this.responsePools = {};
     logger.log(`strategy set to ${strategy}`);
 
-    if (this._strategy === 'continuous') {
-      this._continuousInterval = setInterval(() => this.aggregate(), config.aggregate.interval);
+    if (this.currentStrategy === 'continuous') {
+      this.interval = setInterval(() => this.aggregate(), config.aggregate.interval);
     }
   }
 
   _resetTimers() {
-    clearTimeout(this._timeout);
-    clearInterval(this._continuousInterval);
-    this._responsePools = {};
+    clearTimeout(this.timeout);
+    clearInterval(this.interval);
+    this.responsePools = {};
   }
 
   slaveReport(apName, rssi) {
-    clearTimeout(this._timeout);
-    const pool = this._responsePools;
+    clearTimeout(this.timeout);
+    const pool = this.responsePools;
 
     // AP already responded
-    if (this._strategy === 'when_available') {
-      this._timeout = setTimeout(() => this.aggregate(), config.aggregate.timeout);
+    if (this.currentStrategy === 'when_available') {
+      this.timeout = setTimeout(() => this.aggregate(), config.aggregate.timeout);
     }
 
     // Save the signal / update with best signal
@@ -83,34 +94,34 @@ export class BeaconAggregator {
       pool[apName] = rssi;
     }
 
-    if (this._strategy === 'when_available' && apNames.length === Object.keys(pool).length) {
+    if (this.currentStrategy === 'when_available' && apNames.length === Object.keys(pool).length) {
       this.aggregate();
     }
   }
 
   aggregate() {
-    const pool = this._responsePools;
+    const pool = this.responsePools;
     const hasResponses = Object.keys(pool).length;
 
     // No response at all / Master is not initialized yet
-    if (!hasResponses || !this._tracker) {
+    if (!hasResponses || !this.tracker) {
       return;
     }
 
-    const { missingAPs } = this._partialPosition(pool);
-    clearTimeout(this._timeout);
-    this._responsePools = {};
+    const {missingAPs} = this.partialPosition(pool);
+    clearTimeout(this.timeout);
+    this.responsePools = {};
 
     if (missingAPs.length) {
-      return this._tracker.partialData(pool);
+      return this.tracker.partialData(pool);
     }
 
     const coords = trilateration.findCoordinates(this.beaconConfig, pool);
 
-    return this._tracker.newPosition(coords, pool);
+    return this.tracker.newPosition(coords, pool);
   }
 
-  _partialPosition(pool) {
+  private partialPosition(pool) {
     const approximateConfig = config.aggregate.approximate;
     let missingAPs = apNames.reduce((missing, apName) => {
       if (!pool[apName]) {
@@ -131,6 +142,6 @@ export class BeaconAggregator {
       }
     }
 
-    return { missingAPs }
+    return {missingAPs}
   }
 }

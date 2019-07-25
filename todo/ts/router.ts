@@ -4,7 +4,7 @@ import {config} from '../../src/config';
 import * as role from './/role';
 import * as utils from '../lib/utils';
 import * as logger from '../lib/logger';
-import * as Aggregator from './aggregator';
+import * as Aggregator from '../../src/src/aggregator';
 
 import HttpError from '../../src/lib/errors';
 

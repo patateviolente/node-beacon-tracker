@@ -2,9 +2,9 @@ import * as fs from 'fs';
 
 import {expect} from 'chai';
 
-import * as Tracker from '../../ts/tracker';
+import Tracker from '../../src/tracker';
 
-import {config} from '../../../src/config';
+import {config} from '../../config';
 
 describe('tracker', () => {
   const currentYYYYMMDD = new Date().toISOString().slice(0, 10).replace(/-/g, "");

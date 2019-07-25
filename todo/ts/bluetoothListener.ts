@@ -1,5 +1,5 @@
 import * as role from './/role';
-import * as Aggregator from './aggregator';
+import * as Aggregator from '../../src/src/aggregator';
 import {config} from '../../src/config';
 
 import * as BeaconScanner from '../../src/lib/bscanner';
@@ -45,7 +45,7 @@ export function scan() {
 
 function informMaster(mac, rssi) {
   const masterUrl = `http://${config.masterIp}:${config.port}/notify/${role.whoami}/${mac}/${rssi}`;
-  logger.log(`Beacon found - call master ${masterUrl}`, role.amISlave ? logger.VERBOSE : logger.EXPERIMENT);
+  logger.log(`Beacon found - call master ${masterUrl}`, role.amIMaster ? logger.EXPERIMENT : logger.VERBOSE);
 
   return utils.getHttp(masterUrl);
 }

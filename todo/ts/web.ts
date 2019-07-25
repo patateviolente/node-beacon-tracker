@@ -9,7 +9,7 @@ import * as Exporter from '../../src/src/exporter';
 
 import HttpError from '../../src/lib/errors';
 
-import * as role from './role';
+import * as role from '../../src/src/role';
 
 global.Promise = Promise;
 

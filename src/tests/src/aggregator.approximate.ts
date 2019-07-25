@@ -2,15 +2,14 @@ import * as sinon from 'sinon';
 import * as proxyquire from 'proxyquire';
 import {expect} from 'chai';
 
-import * as trilateration from '../../../src/lib/trilateration';
+import * as trilateration from '../../lib/trilateration';
 import * as utils from '../../lib/utils';
 
-import {config} from '../../../src/config';
+import {config} from '../../config';
 
-const Aggregator = proxyquire('../../ts/aggregator', {
+const {default: Aggregator} = proxyquire('../../src/aggregator', {
   './tracker': function () {
-    this.on = function () {
-    }
+    this.on = function () {}
   }
 });
 
@@ -19,6 +18,7 @@ const beaconMac = utils.standardizeMac('71:bc:23:4c:72:5b');
 describe('aggregator - approximate', () => {
   let aggregator;
   before(() => {
+    console.log(Aggregator);
     Aggregator.instantiateAll();
     aggregator = Aggregator.byMAC(beaconMac);
   });

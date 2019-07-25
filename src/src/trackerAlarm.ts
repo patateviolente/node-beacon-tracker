@@ -1,26 +1,32 @@
 import * as Promise from 'bluebird';
 
-import * as Bpairing from '../../src/lib/bpairing';
+import Bpairing from '../lib/bpairing';
 
 import * as logger from '../lib/logger';
+import {Peripheral} from "noble";
 
 const maxBeepDuration = 10;
 const minBeepDuration = 5;
 
-global.Promise = Promise;
+export default class TrackerAlarm {
+  private peripheral: Peripheral;
+  private beaconConfig: any;
+  private pair: Bpairing;
+  private timing: any;
 
-export class TrackerAlarm {
-  constructor(peripheral, beaconConfig) {
+  // TODO create interface for config.beaconConfig
+  constructor(peripheral, beaconConfig: any) {
     this.peripheral = peripheral;
     this.beaconConfig = beaconConfig;
     this.pair = new Bpairing(this.peripheral);
   }
 
+  // TODO simplify timing / beepDuration
   updateTiming(distance) {
-    this._timing = {};
-    this._timing.beepDuration = Math.max(Math.min(distance / 2, maxBeepDuration), minBeepDuration);
+    this.timing = {};
+    this.timing.beepDuration = Math.max(Math.min(distance / 2, maxBeepDuration), minBeepDuration);
 
-    return this._timing;
+    return this.timing;
   }
 
   play() {
@@ -29,8 +35,8 @@ export class TrackerAlarm {
 
       return this.pair.connect();
     })
-      .then(() => this._alarmOn(this._timing.beepDuration))
-      .delay(this._timing.beepDuration * 1000)
+      .then(() => this._alarmOn(this.timing.beepDuration))
+      .delay(this.timing.beepDuration * 1000)
       .then(() => this._alarmOff())
       .catch(logger.error)
       .finally(() => this.stop()
@@ -43,7 +49,7 @@ export class TrackerAlarm {
   }
 
   _restartListener() {
-    const bluetoothListener = require('./bluetoothListener');
+    const bluetoothListener = require('../../todo/ts/bluetoothListener');
 
     return bluetoothListener.scan();
   }

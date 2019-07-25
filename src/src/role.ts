@@ -1,4 +1,4 @@
-import * as  config from '../../src/config';
+import {config} from '../config';
 import * as utils from '../lib/utils';
 
 const whoami = process.env.WHOAMI;
@@ -11,12 +11,10 @@ if (!accessPoint) {
 }
 
 const amIMaster = !!accessPoint.master;
-const amISlave = !accessPoint.master;
 const role = (accessPoint.master) ? 'master' : 'slave';
 
 export {
   amIMaster,
-  amISlave,
   role,
   whoami
 };

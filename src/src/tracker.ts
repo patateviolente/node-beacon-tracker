@@ -1,32 +1,32 @@
-import * as events from 'events';
+import {EventEmitter} from 'events';
 
 import * as Promise from 'bluebird';
 
-import * as TrackerAlarm from './trackerAlarm';
-import * as Exporter from '../../src/src/exporter';
+import TrackerAlarm from './trackerAlarm';
+import Exporter from './exporter';
 
 import * as logger from '../lib/logger';
-import * as RunawayBounds from '../../src/lib/runawayBounds';
-import {config} from '../../src/config';
+import RunawayBounds from '../lib/runawayBounds';
+import {config} from '../config';
 
 global.Promise = Promise;
 
-export class Tracker {
+export default class Tracker extends EventEmitter {
+  private bounds: RunawayBounds;
+  private alarm: TrackerAlarm;
+  public exporter: Exporter;
+
   constructor(peripheral, beaconConfig) {
+    super();
     this.bounds = new RunawayBounds(config.runawayBounds);
     this.exporter = new Exporter(peripheral.uuid);
-    this._alarm = new TrackerAlarm(peripheral, beaconConfig);
-    this._eventEmitter = new events.EventEmitter();
-  }
-
-  on(eventName, callback) {
-    this._eventEmitter.on(eventName, callback);
+    this.alarm = new TrackerAlarm(peripheral, beaconConfig);
   }
 
   partialData(pool) {
     logger.log(`partial position ${JSON.stringify(pool)}`, 2);
 
-    return this.exporter.append({ pool });
+    return this.exporter.append({pool});
   }
 
   newPosition(coords, pool) {
@@ -40,16 +40,16 @@ export class Tracker {
       if (isAllowed) {
         logger.log(`Position ok ${JSON.stringify(coords)}`);
 
-        return this._alarm.stop();
+        return this.alarm.stop();
       }
 
       // Update alert timing
       logger.log(`Forbidden position ${JSON.stringify(coords)}`);
-      const timing = this._alarm.updateTiming(distFromZone);
-      this._eventEmitter.emit('alarm', timing.beepDuration);
+      const timing = this.alarm.updateTiming(distFromZone);
+      this.emit('alarm', timing.beepDuration);
 
-      return this._alarm.play();
+      return this.alarm.play();
     })
-      .then(() => this.exporter.append({ pool, coords, distFromZone }))
+      .then(() => this.exporter.append({pool, coords, distFromZone}))
   }
 }

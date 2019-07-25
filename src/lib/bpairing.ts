@@ -1,4 +1,5 @@
 import * as Promise from 'bluebird';
+import {Peripheral} from "noble";
 
 global.Promise = Promise;
 
@@ -6,7 +7,7 @@ export default class BluetoothPairing {
   private peripheral: any;
   private connected: boolean;
 
-  constructor(peripheral) {
+  constructor(peripheral: Peripheral) {
     this.connected = false;
     this.peripheral = peripheral;
     this.peripheral.connectAsync = Promise.promisify(this.peripheral.connect);
