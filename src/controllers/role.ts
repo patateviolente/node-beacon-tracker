@@ -1,4 +1,4 @@
-import {config} from '../config';
+import { config } from '../config';
 import * as envUtils from '../utils/env';
 
 const whoami = process.env.WHOAMI;
@@ -16,5 +16,5 @@ const role = (accessPoint.master) ? 'master' : 'slave';
 export {
   amIMaster,
   role,
-  whoami
+  whoami,
 };

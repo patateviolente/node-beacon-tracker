@@ -9,11 +9,11 @@ import BeaconScanner from './lib/BeaconScanner';
 
 import * as role from './controllers/role';
 
-import {config} from './config';
+import { config } from './config';
 
 const jetty = new Jetty(process.stdout);
 const stats = {};
-const definedDevices = config.beacons.map(({mac}) => mac);
+const definedDevices = config.beacons.map(({ mac }) => mac);
 let lastShow = null;
 
 const startTime = new Date();
@@ -27,7 +27,9 @@ function listenLocalBeacons() {
   scanner.on('signal', (peripheral) => {
     const standardizedMac = utils.standardizeMac(peripheral.uuid);
     if (config.beaconsMac.includes(standardizedMac)) {
-      const masterUrl = `http://${config.masterIp}:${config.port}/notify/${role.whoami}/${standardizedMac}/${peripheral.rssi}`;
+      const domain = `http://${config.masterIp}:${config.port}`;
+      const masterUrl = `${domain}/notify/${role.whoami}/${standardizedMac}/${peripheral.rssi}`;
+
       return httpUtils.getURL(masterUrl);
     }
   });
@@ -54,7 +56,7 @@ function router(req, res) {
         if (!stats[mac][apName]) {
           stats[mac][apName] = [];
         }
-        stats[mac][apName].push(parseInt(rssi));
+        stats[mac][apName].push(parseInt(rssi, 10));
         setTimeout(() => showStats(), 200);
       }
     }
@@ -70,10 +72,13 @@ function showStats() {
   let line = 0;
   const elaspedSeconds = Math.round((new Date().getTime() - startTime.getTime()) / 1000);
   jetty.clear();
-  jetty.moveTo([line++, 0]).text(`Benchmarking device in ${definedDevices.join(' ')} run ${elaspedSeconds}s\n`);
+  jetty.moveTo([line, 0]).text(`Benchmarking device in ${definedDevices.join(' ')}\
+ - ${elaspedSeconds}s\n`);
+  line += 1;
 
   Object.keys(stats).forEach((mac) => {
-    jetty.moveTo([line++, 0]).text(`Device ${mac}:`);
+    jetty.moveTo([line, 0]).text(`Device ${mac}:`);
+    line += 1;
 
     Object.keys(stats[mac]).sort().forEach((apName) => {
       const apRssi = stats[mac][apName].sort();
@@ -82,14 +87,17 @@ function showStats() {
 
         return groups;
       }, {});
-      const formattedGroupRssi = Object.keys(groupRssi).reduce((str, rssi) => {
-        return `${str} ${rssi}x${groupRssi[rssi]}`;
-      }, '');
+      const formattedGroupRssi = Object.keys(groupRssi)
+        .reduce((str, rssi) => `${str} ${rssi}x${groupRssi[rssi]}`, '');
       const avg = Math.round(apRssi.reduce((sum, rssi) => sum + rssi, 0) / apRssi.length);
       const min = apRssi[0];
       const rate = Math.round((apRssi.length / elaspedSeconds) * 100) / 100;
-      jetty.moveTo([line++, 0]).text(`[[${apName}]] ${apRssi.length} signals / min ${min} / avg ${avg} / every ${Math.round(1 / rate)}s`);
-      jetty.moveTo([line++, 0]).text(`${formattedGroupRssi}`);
+      jetty.moveTo([line, 0]).text(`[[${apName}]] ${apRssi.length} signals \
+/ min ${min} / avg ${avg} / every ${Math.round(1 / rate)}s`);
+      line += 1;
+
+      jetty.moveTo([line, 0]).text(`${formattedGroupRssi}`);
+      line += 1;
     });
   });
 }

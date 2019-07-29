@@ -5,7 +5,9 @@ import * as path from 'path';
 import * as Promise from 'bluebird';
 
 import * as logger from '../lib/logger';
-import {config} from '../config';
+import { config } from '../config';
+
+import * as stringUtils from '../utils/strings';
 
 const readFileAsync = Promise.promisify(fs.readFile);
 const writeFileAsync = Promise.promisify(fs.writeFile);
@@ -45,11 +47,11 @@ export default class Exporter {
     })
       .then(() => {
         this.hasUpdates = true;
-        this.activeData.push({date: new Date(), ...data});
+        this.activeData.push({ date: new Date(), ...data });
 
         // Save into live logs
         // @ts-ignore
-        return writeFileAsync(this.liveLogsPath, JSON.stringify({data: this.activeData}));
+        return writeFileAsync(this.liveLogsPath, JSON.stringify({ data: this.activeData }));
       })
       .return(this);
   }
@@ -62,7 +64,7 @@ export default class Exporter {
         this.interval = setInterval(() => this.saveCurrent(), config.dashboard.autosaveInterval);
 
         return this.activeData;
-      })
+      });
   }
 
   close(): Promise<void> {
@@ -73,13 +75,13 @@ export default class Exporter {
 
       this.hasUpdates = false;
       clearInterval(this.interval);
-    })
+    });
   }
 
   saveCurrent(): Promise<void> {
     const fileName = `${this.mac}-${this.activeDate}.json`;
     const filePath = path.join(this.base, fileName);
-    const fileData = JSON.stringify({data: this.activeData});
+    const fileData = JSON.stringify({ data: this.activeData });
     logger.log(`Saving file ${filePath}`);
 
     // @ts-ignore
@@ -100,11 +102,11 @@ export default class Exporter {
     // @ts-ignore
       .then(() => readFileAsync(filePath, 'utf8'))
       .then(rawData => JSON.parse(rawData))
-      .then((json) => json.data || [])
+      .then(json => json.data || [])
       .catch(() => []);
   }
 }
 
 function nowYYYYMMDD(date: Date = new Date()): string {
-  return date.toISOString().slice(0, 10).replace(/-/g, "");
+  return stringUtils.dateToYYYYMMDD(date);
 }

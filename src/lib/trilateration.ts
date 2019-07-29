@@ -1,8 +1,8 @@
 import * as trilateration from 'node-trilateration';
 
-import {PointXY} from './runawayBounds';
+import { PointXY } from './RunawayBounds';
 
-import {config} from '../config';
+import { config } from '../config';
 
 /**
  * Distance = 10 ^ ((Measured Power – RSSI)/(10 * N))
@@ -27,8 +27,8 @@ export function findCoordinates(beaconConfig, data: any): PointXY {
       distance: rssiToMeters(
         data[beaconName],
         beaconConfig.reference.rssi[beaconName],
-        beaconConfig.reference.distance[beaconName]
-      )
+        beaconConfig.reference.distance[beaconName],
+      ),
     }));
 
   return trilateration.calculate(beacons);

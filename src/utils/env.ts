@@ -1,4 +1,4 @@
-import * as logger from "../lib/logger";
+import * as logger from '../lib/logger';
 
 export function exit(message: string): void {
   logger.error(message);

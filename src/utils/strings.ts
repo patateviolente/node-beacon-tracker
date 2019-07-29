@@ -17,3 +17,9 @@ export function standardizeMac(str: string): string {
 export function isNumeric(n: any): boolean {
   return !isNaN(parseFloat(n)) && isFinite(n);
 }
+
+export function dateToYYYYMMDD(date: Date): string {
+  return date.toISOString()
+    .slice(0, 10)
+    .replace(/-/g, '');
+}

@@ -1,13 +1,15 @@
 import * as fs from 'fs';
 
-import {expect} from 'chai';
+import { expect } from 'chai';
+
+import * as stringUtils from '../../utils/strings';
 
 import Tracker from '../../controllers/Tracker';
 
-import {config} from '../../config';
+import { config } from '../../config';
 
 describe('tracker', () => {
-  const currentYYYYMMDD = new Date().toISOString().slice(0, 10).replace(/-/g, "");
+  const currentYYYYMMDD = stringUtils.dateToYYYYMMDD(new Date());
   const todayLog = `/tmp/aabbccddeeff-${currentYYYYMMDD}.json`;
   const restoreBoundsConfig = config.runawayBounds;
   const peripheral = {
@@ -26,7 +28,7 @@ describe('tracker', () => {
 
   it('should log data when a partial position is found', async () => {
     const tracker = new Tracker(peripheral, {});
-    await tracker.partialData({pi1: 89});
+    await tracker.partialData({ pi1: 89 });
     await tracker.exporter.close();
     expect(fs.existsSync(todayLog)).to.be.true;
     fs.unlinkSync(todayLog);

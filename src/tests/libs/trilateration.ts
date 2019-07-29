@@ -1,6 +1,6 @@
-import {expect} from 'chai';
+import { expect } from 'chai';
 
-import {config} from '../../config';
+import { config } from '../../config';
 import * as trilateration from '../../lib/trilateration';
 
 describe('Trilateration lib', () => {
@@ -86,7 +86,7 @@ describe('Trilateration lib', () => {
       'rssi-35': 0.14,
       'rssi-34': 0.13,
       'rssi-33': 0.11,
-      'rssi-32': 0.1
+      'rssi-32': 0.1,
     });
   });
 
@@ -113,18 +113,18 @@ describe('Trilateration lib', () => {
     // 2| - - - - - - -
     // 3| - x - o - x -
     config.accessPoints = {
-      ap1: {x: 3, y: 0},
-      ap2: {x: 1, y: 2},
-      ap3: {x: 5, y: 2}
+      ap1: { x: 3, y: 0 },
+      ap2: { x: 1, y: 2 },
+      ap3: { x: 5, y: 2 },
     };
     const coords = trilateration.findCoordinates({
       mac: '112233445566',
       reference: {
         distance: 1,
-        rssi: {ap1: -40, ap2: -42, ap3: -39}
-      }
-    }, {ap1: -40, ap2: -42, ap3: -39});
-    expect(coords).to.eql({x: 3, y: 2})
+        rssi: { ap1: -40, ap2: -42, ap3: -39 },
+      },
+    }, { ap1: -40, ap2: -42, ap3: -39 });
+    expect(coords).to.eql({ x: 3, y: 2 });
   });
 });
 

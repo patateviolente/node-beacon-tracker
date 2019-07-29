@@ -1,13 +1,13 @@
-import * as Promise from 'bluebird'
-import {Request, Response} from 'express';
+import * as Promise from 'bluebird';
+import { Request, Response } from 'express';
 
-import {config} from '../config';
+import { config } from '../config';
 import * as role from '../controllers/role';
 import * as utils from '../utils/strings';
 import * as logger from '../lib/logger';
 import Aggregator from '../controllers/Aggregator';
 
-import {HttpError} from '../lib/errors';
+import { HttpError } from '../lib/errors';
 
 export default function route(req: Request, res: Response): Promise<any> {
   return Promise.try(() => {
@@ -29,9 +29,9 @@ export default function route(req: Request, res: Response): Promise<any> {
       const code = e.code || 500;
       logger.error(`[${code}] ${req.url} ${e.message}`);
       if (res) {
-        res.writeHead(code, {'content-type': 'application/json'});
+        res.writeHead(code, { 'content-type': 'application/json' });
 
-        return res.end(JSON.stringify({error: e.message}));
+        return res.end(JSON.stringify({ error: e.message }));
       }
     });
 }

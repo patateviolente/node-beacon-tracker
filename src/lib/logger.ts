@@ -13,7 +13,12 @@ export function error(message: string): void {
 }
 
 function timestamp(): string {
-  return `[${process.env.WHOAMI}][${new Date().toISOString().substring(0, 23).replace(/[-]/g, '').replace('T', '-')}]`;
+  const formattedDate = new Date().toISOString()
+    .substring(0, 23)
+    .replace(/[-]/g, '')
+    .replace('T', '-');
+
+  return `[${process.env.WHOAMI}][${formattedDate}]`;
 }
 
 export enum LOGLEVEL {

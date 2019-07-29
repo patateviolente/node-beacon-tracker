@@ -1,4 +1,5 @@
 import * as Promise from 'bluebird';
+import { Peripheral } from 'noble';
 
 import * as utils from '../utils/strings';
 import * as logger from '../lib/logger';
@@ -6,9 +7,8 @@ import * as trilateration from '../lib/trilateration';
 
 import Tracker from './Tracker';
 
-import {BeaconConfig, config} from '../config';
+import { BeaconConfig, config } from '../config';
 import Timeout = NodeJS.Timeout;
-import {Peripheral} from "noble";
 
 const apNames = Object.keys(config.accessPoints);
 
@@ -17,7 +17,7 @@ let aggregates: AggregatorIndex = {};
 
 export enum Strategies {
   continuous = 'continuous',
-  when_available = 'when_available'
+  when_available = 'when_available',
 }
 
 export type TRssiPool = { [apName: string]: number; };
@@ -26,7 +26,7 @@ export type AggregateConfig = {
   timeout: number,
   interval: number,
   strategy: Strategies,
-  approximate: { missing: string, rssi: number }[]
+  approximate: { missing: string, rssi: number }[],
 };
 
 export default class Aggregator {
@@ -53,11 +53,12 @@ export default class Aggregator {
   }
 
   static instantiateAll(): void {
-    aggregates = config.beacons.reduce((aggregates: AggregatorIndex, beaconConfig: BeaconConfig): AggregatorIndex => {
-      aggregates[beaconConfig.mac] = new Aggregator(beaconConfig);
+    aggregates = config.beacons.reduce(
+      (aggregates: AggregatorIndex, beaconConfig: BeaconConfig): AggregatorIndex => {
+        aggregates[beaconConfig.mac] = new Aggregator(beaconConfig);
 
-      return aggregates;
-    }, {});
+        return aggregates;
+      }, {});
   }
 
   addPeripheral(peripheral: Peripheral): this {
@@ -124,7 +125,7 @@ export default class Aggregator {
       return;
     }
 
-    const {missingAPs} = this.partialPosition(pool);
+    const { missingAPs } = this.partialPosition(pool);
     clearTimeout(this.timeout);
     this.rssiPool = {};
 
@@ -134,7 +135,7 @@ export default class Aggregator {
 
     return this.tracker.newPosition(
       trilateration.findCoordinates(this.beaconConfig, pool),
-      pool
+      pool,
     );
   }
 
@@ -159,6 +160,6 @@ export default class Aggregator {
       }
     }
 
-    return {missingAPs}
+    return { missingAPs };
   }
 }

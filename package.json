@@ -2,13 +2,16 @@
   "name": "node-beacon-tracker",
   "version": "1.0.0",
   "description": "Triangulation node server for tracking moving targets",
-  "main": "src/index.ts",
+  "main": "src/app.ts",
   "scripts": {
-    "start": "export TESTENV= ; node dist/index.js",
-    "test": "export TESTENV=1 ; ./node_modules/mocha/bin/mocha dist/tests/*",
-    "benchmark": "node src/benchmark.js",
-    "lint": "eslint .",
-    "tsc": "tsc"
+    "benchmark": "node dist/src/benchmark.js",
+    "start": "export TESTENV= ; npm run serve",
+    "serve": "node dist/app.js",
+    "test": "export TESTENV=1 ; npm run build-ts ; ./node_modules/mocha/bin/mocha dist/tests/*",
+    "lint": "./node_modules/tslint/bin/tslint './src/**/*.ts'",
+    "build": "npm run build-ts && npm run lint",
+    "build-ts": "tsc",
+    "watch-ts": "tsc -w"
   },
   "author": "violentpotato",
   "license": "ISC",

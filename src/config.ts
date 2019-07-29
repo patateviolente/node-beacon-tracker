@@ -1,17 +1,17 @@
 import * as utils from './utils/strings';
 
-import {Bounds} from './lib/runawayBounds';
-import {AggregateConfig} from './controllers/Aggregator';
+import { Bounds } from './lib/RunawayBounds';
+import { AggregateConfig } from './controllers/Aggregator';
 
 export type BeaconConfig = {
   name: string,
   mac: string,
   reference: {
     distance: number,
-    rssi: { [apName: string]: number }
+    rssi: { [apName: string]: number },
   },
   aggregate: any,
-  pair: any
+  pair: any,
 };
 
 export type AccessPointConfig = {
@@ -31,16 +31,16 @@ export const config: any = {
     mac: '71:bc:23:4c:72:5b',
     reference: {
       distance: 5,
-      rssi: {pi1: -72, pi2: -79, pi3: -80}
+      rssi: { pi1: -72, pi2: -79, pi3: -80 },
     },
 
-    aggregate: {strategy: 'continuous'},
+    aggregate: { strategy: 'continuous' },
     pair: {
       service: '0000ff0000001000800000805f9b34fb',
       characteristic: '0000ff0100001000800000805f9b34fb',
       enable: characteristic => characteristic.writeAsync(Buffer.from('03', 'hex'), false),
-      disable: characteristic => characteristic.writeAsync(Buffer.from('03', 'hex'), false)
-    }
+      disable: characteristic => characteristic.writeAsync(Buffer.from('03', 'hex'), false),
+    },
   }],
   // Default aggregate values for beacons
   aggregate: <AggregateConfig>{
@@ -51,18 +51,18 @@ export const config: any = {
     strategy: 'continuous',
     // Will set a value when one AP is missing
     approximate: [
-      {missing: 'pi3', rssi: -92},
-    ]
+      { missing: 'pi3', rssi: -92 },
+    ],
   },
   accessPoints: <{ [apName: string]: AccessPointConfig }>{
     pi1: {
       master: true,
       url: 'pimaster',
       x: 0.5,
-      y: 8
+      y: 8,
     },
-    pi2: {x: 0, y: 0},
-    pi3: {x: 7.5, y: 9},
+    pi2: { x: 0, y: 0 },
+    pi3: { x: 7.5, y: 9 },
   },
   runawayBounds: <Bounds>[
     [[-Infinity, -Infinity], [-1, 8]],
@@ -71,13 +71,14 @@ export const config: any = {
   dashboard: {
     autosaveInterval: 900 * 1000,
     port: 5553,
-    base: '/home/pi/tracking/'
-  }
+    base: '/home/pi/tracking/',
+  },
 };
 
 config.beacons.map((beacon) => {
   beacon.mac = utils.standardizeMac(beacon.mac);
 });
-config.beaconsMac = config.beacons.map((beacon) => beacon.mac);
-config.mastersName = Object.keys(config.accessPoints).find(apName => config.accessPoints[apName].url);
+config.beaconsMac = config.beacons.map(beacon => beacon.mac);
+config.mastersName = Object.keys(config.accessPoints)
+  .find(apName => config.accessPoints[apName].url);
 config.masterIp = config.accessPoints[config.mastersName].url;

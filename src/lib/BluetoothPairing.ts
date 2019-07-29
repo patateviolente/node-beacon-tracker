@@ -1,21 +1,21 @@
 import * as Promise from 'bluebird';
-import {Characteristic, Peripheral, Service} from "noble";
+import { Characteristic, Peripheral, Service } from 'noble';
 
 declare module 'noble' {
   export interface Peripheral {
-    connectAsync(): Promise<any>
+    connectAsync(): Promise<any>;
 
-    discoverServicesAsync(serviceUUIDs: string[]): Promise<Service[]>
+    discoverServicesAsync(serviceUUIDs: string[]): Promise<Service[]>;
 
-    disconnectAsync(): Promise<any>
+    disconnectAsync(): Promise<any>;
   }
 
   export interface Service {
-    discoverCharacteristicsAsync(characteristicUUIDs: string[]): Promise<Characteristic[]>
+    discoverCharacteristicsAsync(characteristicUUIDs: string[]): Promise<Characteristic[]>;
   }
 
   export interface Characteristic {
-    writeAsync(data: Buffer, notify: boolean): Promise<void>
+    writeAsync(data: Buffer, notify: boolean): Promise<void>;
   }
 }
 
@@ -36,7 +36,7 @@ export default class BluetoothPairing {
 
   disconnect(): Promise<this> {
     if (this.peripheral.state === 'disconnected') {
-      return Promise.resolve(this)
+      return Promise.resolve(this);
     }
 
     return this.peripheral.disconnectAsync()

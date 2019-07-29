@@ -1,11 +1,12 @@
 import * as Promise from 'bluebird';
-import {Peripheral} from "noble";
+import { Peripheral } from 'noble';
 
 import BluetoothPairing from '../lib/BluetoothPairing';
+import { scan } from './bluetoothListener';
 
 import * as logger from '../lib/logger';
 
-import {BeaconConfig} from '../config';
+import { BeaconConfig } from '../config';
 
 const maxBeepDuration = 10;
 const minBeepDuration = 5;
@@ -48,9 +49,7 @@ export default class TrackerAlarm {
   }
 
   private restartListener() {
-    const bluetoothListener = require('./bluetoothListener');
-
-    return bluetoothListener.scan();
+    return scan();
   }
 
   private alarmOn(duration: number): Promise<void> {

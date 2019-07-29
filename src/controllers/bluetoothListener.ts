@@ -1,5 +1,5 @@
-import * as Promise from "bluebird";
-import {Peripheral} from "noble";
+import * as Promise from 'bluebird';
+import { Peripheral } from 'noble';
 
 import Aggregator from './Aggregator';
 
@@ -10,7 +10,7 @@ import * as httpUtils from '../utils/http';
 import * as stringUtils from '../utils/strings';
 
 import * as role from './role';
-import {config} from '../config';
+import { config } from '../config';
 
 const scanner: BeaconScanner = new BeaconScanner();
 

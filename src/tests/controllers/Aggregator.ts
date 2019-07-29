@@ -1,13 +1,13 @@
 import * as Promise from 'bluebird';
 import * as sinon from 'sinon';
-import {expect} from 'chai';
+import { expect } from 'chai';
 
 import * as trilateration from '../../lib/trilateration';
 import * as utils from '../../utils/strings';
 
-import {config} from '../../config';
-import * as trackerPackage from "../../controllers/Tracker";
-import {EventEmitter} from "events";
+import { config } from '../../config';
+import * as trackerPackage from '../../controllers/Tracker';
+import { EventEmitter } from 'events';
 import Aggregator from '../../controllers/Aggregator';
 
 const beaconMac = utils.standardizeMac('71:bc:23:4c:72:5b');
@@ -110,7 +110,7 @@ describe('aggregator', () => {
     it('should trilaterate, call back and purge response pool when all AP responded in "when_available" strategy', () => {
       config.aggregate.strategy = 'when_available';
       const findCoordinateStub = sinon.stub(trilateration, 'findCoordinates')
-        .returns({x: 10, y: 5});
+        .returns({ x: 10, y: 5 });
       const aggregateSpy = sinon.spy(aggregator, 'aggregate');
       const newPositionStub = sinon.stub(aggregator.tracker, 'newPosition');
       const partialDataStub = sinon.stub(aggregator.tracker, 'partialData');
@@ -125,7 +125,7 @@ describe('aggregator', () => {
       expect(findCoordinateStub.firstCall.args[0]).to.include.keys(['mac', 'reference']);
       expect(findCoordinateStub.firstCall.args[1]).to.have.keys(['pi1', 'pi2', 'pi3']);
       expect(findCoordinateStub.firstCall.args[1].pi1).to.equal(-50);
-      expect(newPositionStub.firstCall.args[0]).to.eql({x: 10, y: 5});
+      expect(newPositionStub.firstCall.args[0]).to.eql({ x: 10, y: 5 });
     });
 
     it('should call incompleteData callback where AP response are missing', () => {

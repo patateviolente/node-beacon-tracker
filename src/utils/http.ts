@@ -1,10 +1,10 @@
-import * as http from "http";
+import * as http from 'http';
 
 export function getURL(url: string): Promise<Object> {
   return new Promise((resolve, reject) => {
     const request: http.ClientRequest = http.get(url, (response) => {
       const bodyParts = [];
-      response.on('data', (chunk) => bodyParts.push(chunk));
+      response.on('data', chunk => bodyParts.push(chunk));
       response.on('end', () => {
         const body: any = JSON.stringify(bodyParts.join(''));
 
@@ -13,6 +13,6 @@ export function getURL(url: string): Promise<Object> {
           : resolve(body);
       });
     });
-    request.on('error', (err) => reject(err))
+    request.on('error', reject);
   });
 }

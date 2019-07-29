@@ -1,6 +1,6 @@
 import * as rewire from 'rewire';
 import * as sinon from 'sinon';
-import {expect} from 'chai';
+import { expect } from 'chai';
 
 import * as aggregator from '../../controllers/Aggregator';
 
@@ -13,7 +13,7 @@ describe('router', () => {
     const notFoundSpy = sinon.spy(() => {
     });
     router.__set__('notFound', notFoundSpy);
-    await router.default({url: '/unknown'});
+    await router.default({ url: '/unknown' });
     sinon.assert.calledOnce(notFoundSpy);
   });
 
@@ -23,7 +23,7 @@ describe('router', () => {
     const notFoundSpy = sinon.spy(() => {
     });
     router.__set__('notFound', notFoundSpy);
-    await router.default({url: '/unknown'});
+    await router.default({ url: '/unknown' });
     sinon.assert.calledOnce(notFoundSpy);
   });
 
@@ -31,7 +31,7 @@ describe('router', () => {
     // @ts-ignore
     role.amIMaster = true;
     const byMacStub = sinon.stub(aggregator.default, 'byMAC');
-    await router.default({url: '/notify/pi2/11:22:33:aa:bb:cc/-60'});
+    await router.default({ url: '/notify/pi2/11:22:33:aa:bb:cc/-60' });
     sinon.assert.calledOnce(byMacStub);
     expect(byMacStub.firstCall.args).to.eql(['11:22:33:aa:bb:cc']);
   });

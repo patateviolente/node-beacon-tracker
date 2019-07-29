@@ -1,4 +1,4 @@
-import {round} from '../utils/strings';
+import { round } from '../utils/strings';
 
 export type Point = [number, number];
 export type Segment = [Point, Point];
@@ -7,7 +7,7 @@ export type Bounds = Bound[];
 export type PointXY = {
   x: number,
   y: number,
-}
+};
 
 /**
  * Handle an array of square bounds and enable to calculate nearest
@@ -72,7 +72,7 @@ function boundToSegments(z: Bound): Segment[] {
   const b: Point = [a[0], c[1]];
   const d: Point = [c[0], a[1]];
 
-  return [[a, b], [b, c], [c, d], [a, d]]
+  return [[a, b], [b, c], [c, d], [a, d]];
 }
 
 function approxInfinity(number: number): number {

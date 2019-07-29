@@ -10,7 +10,7 @@ export default class BeaconScanner {
   constructor(filter ?: string[]) {
     this.filter = filter;
     this.events = {
-      signal: () => {}
+      signal: () => {},
     };
   }
 

@@ -1,14 +1,14 @@
-import {EventEmitter} from 'events';
+import { EventEmitter } from 'events';
 
 import * as Promise from 'bluebird';
 
-import {TRssiPool} from './Aggregator';
+import { TRssiPool } from './Aggregator';
 import TrackerAlarm from './TrackerAlarm';
 import Exporter from './Exporter';
 
 import * as logger from '../lib/logger';
-import RunawayBounds, {PointXY} from '../lib/runawayBounds';
-import {config} from '../config';
+import RunawayBounds, { PointXY } from '../lib/RunawayBounds';
+import { config } from '../config';
 
 export default class Tracker extends EventEmitter {
   private bounds: RunawayBounds;
@@ -25,9 +25,8 @@ export default class Tracker extends EventEmitter {
   partialData(pool: TRssiPool): Promise<any> {
     logger.log(`partial position ${JSON.stringify(pool)}`, 2);
 
-    return this.exporter.append({pool});
+    return this.exporter.append({ pool });
   }
-
 
   newPosition(coords: PointXY, pool: TRssiPool): Promise<any> {
     let logInfo = '';
@@ -53,6 +52,6 @@ export default class Tracker extends EventEmitter {
 
       return this.alarm.play();
     })
-      .then(() => this.exporter.append({pool, coords, distFromZone, logInfo}))
+      .then(() => this.exporter.append({ pool, coords, distFromZone, logInfo }));
   }
 }
