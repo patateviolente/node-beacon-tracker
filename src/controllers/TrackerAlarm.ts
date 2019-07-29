@@ -1,9 +1,9 @@
 import * as Promise from 'bluebird';
+import {Peripheral} from "noble";
 
-import Bpairing from '../lib/BluetoothPairing';
+import BluetoothPairing from '../lib/BluetoothPairing';
 
 import * as logger from '../lib/logger';
-import {Peripheral} from "noble";
 
 import {BeaconConfig} from '../config';
 
@@ -13,22 +13,22 @@ const minBeepDuration = 5;
 export default class TrackerAlarm {
   private peripheral: Peripheral;
   private beaconConfig: BeaconConfig;
-  private pair: Bpairing;
+  private pair: BluetoothPairing;
   private alarmDuration: number;
 
   constructor(peripheral, beaconConfig: BeaconConfig) {
     this.peripheral = peripheral;
     this.beaconConfig = beaconConfig;
-    this.pair = new Bpairing(this.peripheral);
+    this.pair = new BluetoothPairing(this.peripheral);
   }
 
-  updateAlarmDuration(distance) {
-    const alarmDuration = Math.max(Math.min(distance / 2, maxBeepDuration), minBeepDuration);
+  updateAlarmDuration(distance: number): number {
+    this.alarmDuration = Math.max(Math.min(distance / 2, maxBeepDuration), minBeepDuration);
 
-    return alarmDuration;
+    return this.alarmDuration;
   }
 
-  play() {
+  play(): Promise<void> {
     return Promise.try(() => {
       if (this.peripheral.state === 'connected') return;
 
@@ -42,7 +42,7 @@ export default class TrackerAlarm {
         .then(() => this.restartListener()));
   }
 
-  stop() {
+  stop(): Promise<any> {
     return this.pair.disconnect()
       .catch(logger.error);
   }
@@ -53,7 +53,7 @@ export default class TrackerAlarm {
     return bluetoothListener.scan();
   }
 
-  private alarmOn(duration) {
+  private alarmOn(duration: number): Promise<void> {
     const pairConfig = this.beaconConfig.pair;
     if (!pairConfig) {
       return Promise.reject('pair config unset');
@@ -65,7 +65,7 @@ export default class TrackerAlarm {
       .then(characteristic => pairConfig.enable(characteristic));
   }
 
-  private alarmOff() {
+  private alarmOff(): Promise<void> {
     const pairConfig = this.beaconConfig.pair;
     if (!pairConfig) {
       return Promise.reject('pair config unset');

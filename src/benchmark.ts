@@ -1,4 +1,4 @@
-import * as Bluebird from 'bluebird';
+import * as Promise from 'bluebird';
 import * as Jetty from 'jetty';
 import * as http from 'http';
 
@@ -37,7 +37,7 @@ function listenLocalBeacons() {
 
 // Listen slaves
 function router(req, res) {
-  return Bluebird.try(() => {
+  return Promise.try(() => {
     const url = req.url;
     res.end('{}');
     if (url.startsWith('/notify/')) {

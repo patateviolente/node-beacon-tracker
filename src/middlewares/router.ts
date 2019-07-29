@@ -1,4 +1,5 @@
 import * as Promise from 'bluebird'
+import {Request, Response} from 'express';
 
 import {config} from '../config';
 import * as role from '../controllers/role';
@@ -8,9 +9,7 @@ import Aggregator from '../controllers/Aggregator';
 
 import {HttpError} from '../lib/errors';
 
-global.Promise = Promise;
-
-export default function route(req, res) {
+export default function route(req: Request, res: Response): Promise<any> {
   return Promise.try(() => {
     const url = req.url;
     if (url.startsWith('/notify/')) {
@@ -25,7 +24,7 @@ export default function route(req, res) {
 
     return notFound(req);
   })
-    .then(json => (res && res.end(JSON.stringify(json)) || json))
+    .then(json => res.end(JSON.stringify(json)))
     .catch((e) => {
       const code = e.code || 500;
       logger.error(`[${code}] ${req.url} ${e.message}`);
@@ -37,7 +36,7 @@ export default function route(req, res) {
     });
 }
 
-function notify(req) {
+function notify(req: Request): Promise<any> {
   return Promise.try(() => {
     const notifyUrl = req.url.replace(/^\/notify\//, '');
     const params = notifyUrl.split('/');
@@ -56,8 +55,3 @@ function notify(req) {
 function notFound(req) {
   throw new HttpError(404, `Route ${req.url} unknown`);
 }
-
-export const __testing__ = {
-  notify,
-  notFound
-};

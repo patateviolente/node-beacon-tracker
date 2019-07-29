@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as os from 'os';
 
-import * as Bluebird from 'bluebird';
+import * as Promise from 'bluebird';
 import {expect} from 'chai';
 
 import Exporter from '../../controllers/Exporter';
@@ -61,7 +61,7 @@ describe('exporter', () => {
     await exporter.append({pool: {pi1: -62}});
 
     expect(fs.existsSync(todayLog)).to.be.false;
-    await Bluebird.delay(200);
+    await Promise.delay(200);
     expect(fs.existsSync(todayLog)).to.be.true;
   });
 });

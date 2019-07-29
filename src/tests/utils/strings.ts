@@ -4,10 +4,7 @@ import * as utils from '../../utils/strings';
 
 describe('utils lib', () => {
   it('isMac', () => {
-    expect(utils.isMac(false)).to.be.false;
     expect(utils.isMac('hello')).to.be.false;
-    expect(utils.isMac(123)).to.be.false;
-    expect(utils.isMac(112233445566)).to.be.true;
     expect(utils.isMac('ab:ac:ef:01:23:45')).to.be.true;
     expect(utils.isMac('AB:ac:ef01:23:45')).to.be.true;
   });

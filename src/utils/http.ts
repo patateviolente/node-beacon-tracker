@@ -1,6 +1,6 @@
 import * as http from "http";
 
-export function getURL(url) {
+export function getURL(url: string): Promise<Object> {
   return new Promise((resolve, reject) => {
     const request: http.ClientRequest = http.get(url, (response) => {
       const bodyParts = [];

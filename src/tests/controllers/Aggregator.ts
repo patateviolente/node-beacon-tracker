@@ -29,7 +29,7 @@ describe('aggregator', () => {
     sinon.stub(trackerPackage, 'default')
       .callsFake(() => new StubbedTracker());
     aggregator.addPeripheral(null);
-    aggregator.responsePools = {};
+    aggregator.rssiPool = {};
   });
   afterEach(() => {
     sinon.restore();
@@ -97,9 +97,9 @@ describe('aggregator', () => {
       await Promise.delay(20);
       expect(aggregateStub.callCount).to.equal(1);
 
-      expect(aggregator.responsePools.pi1).to.equal(-45);
-      expect(aggregator.responsePools.pi2).to.equal(-55);
-      expect(aggregator.responsePools.pi3).to.equal(-60);
+      expect(aggregator.rssiPool.pi1).to.equal(-45);
+      expect(aggregator.rssiPool.pi2).to.equal(-55);
+      expect(aggregator.rssiPool.pi3).to.equal(-60);
     });
   });
 
@@ -121,7 +121,7 @@ describe('aggregator', () => {
       expect(findCoordinateStub.callCount).to.equal(1);
       expect(newPositionStub.callCount).to.equal(1);
       expect(partialDataStub.callCount).to.equal(0);
-      expect(aggregator.responsePools).to.eql({});
+      expect(aggregator.rssiPool).to.eql({});
       expect(findCoordinateStub.firstCall.args[0]).to.include.keys(['mac', 'reference']);
       expect(findCoordinateStub.firstCall.args[1]).to.have.keys(['pi1', 'pi2', 'pi3']);
       expect(findCoordinateStub.firstCall.args[1].pi1).to.equal(-50);
@@ -139,7 +139,7 @@ describe('aggregator', () => {
       expect(findCoordinateStub.callCount).to.equal(0);
       expect(newPositionStub.callCount).to.equal(0);
       expect(partialDataStub.callCount).to.equal(1);
-      expect(aggregator.responsePools).to.eql({});
+      expect(aggregator.rssiPool).to.eql({});
     });
   });
 });

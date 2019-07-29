@@ -8,6 +8,7 @@
   "files": [
     "./node_modules/@types/node/http.d.ts",
     "./node_modules/@types/node/fs.d.ts",
+    "./node_modules/@types/express/index.d.ts",
     "./node_modules/@types/chai/index.d.ts",
     "./node_modules/@types/mocha/index.d.ts",
     "./node_modules/@types/proxyquire/index.d.ts",

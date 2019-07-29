@@ -2,16 +2,16 @@ import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
 
-import * as Bluebird from 'bluebird';
+import * as Promise from 'bluebird';
 
 import * as logger from '../lib/logger';
 import {config} from '../config';
 
-const readFileAsync = Bluebird.promisify(fs.readFile);
-const writeFileAsync = Bluebird.promisify(fs.writeFile);
+const readFileAsync = Promise.promisify(fs.readFile);
+const writeFileAsync = Promise.promisify(fs.writeFile);
 
 type ExportRow = any;
-type ExportData = ExportRow[];
+export type ExportData = ExportRow[];
 
 export default class Exporter {
   private mac: string;
@@ -32,8 +32,8 @@ export default class Exporter {
     this.liveLogsPath = path.join(os.tmpdir(), `${this.mac}.json`);
   }
 
-  append(data: ExportRow): Bluebird<unknown> {
-    return Bluebird.try(() => {
+  append(data: ExportRow): Promise<unknown> {
+    return Promise.try(() => {
       if (!this.activeDate) {
         return this.loadCurrent();
       }
@@ -50,7 +50,8 @@ export default class Exporter {
         // Save into live logs
         // @ts-ignore
         return writeFileAsync(this.liveLogsPath, JSON.stringify({data: this.activeData}));
-      });
+      })
+      .return(this);
   }
 
   loadCurrent(): Promise<ExportData> {
@@ -64,13 +65,15 @@ export default class Exporter {
       })
   }
 
-  async close(): Promise<void> {
-    if (this.hasUpdates) {
-      await this.saveCurrent();
-    }
+  close(): Promise<void> {
+    return Promise.try(async () => {
+      if (this.hasUpdates) {
+        await this.saveCurrent();
+      }
 
-    this.hasUpdates = false;
-    clearInterval(this.interval);
+      this.hasUpdates = false;
+      clearInterval(this.interval);
+    })
   }
 
   saveCurrent(): Promise<void> {
@@ -102,6 +105,6 @@ export default class Exporter {
   }
 }
 
-function nowYYYYMMDD(date = new Date()) {
+function nowYYYYMMDD(date: Date = new Date()): string {
   return date.toISOString().slice(0, 10).replace(/-/g, "");
 }

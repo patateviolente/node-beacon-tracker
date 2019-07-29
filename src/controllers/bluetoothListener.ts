@@ -1,3 +1,6 @@
+import * as Promise from "bluebird";
+import {Peripheral} from "noble";
+
 import Aggregator from './Aggregator';
 
 import BeaconScanner from '../lib/BeaconScanner';
@@ -13,8 +16,8 @@ const scanner: BeaconScanner = new BeaconScanner();
 
 const lastSignalPerMac = {};
 
-export function init() {
-  scanner.on('signal', (peripheral) => {
+export function init(): Promise<void> {
+  scanner.on('signal', (peripheral: Peripheral) => {
     const standardizedMac = stringUtils.standardizeMac(peripheral.uuid);
 
     if (!config.beaconsMac.includes(standardizedMac)) {
@@ -35,7 +38,7 @@ export function init() {
   });
 
   logger.log('...initializing bluetooth listener');
-  scanner.startScan()
+  return scanner.startScan()
     .then(() => logger.log('Listener ready'))
     .catch(error => logger.error(error));
 }

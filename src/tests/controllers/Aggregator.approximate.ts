@@ -30,7 +30,7 @@ describe('aggregator - approximate', () => {
     sinon.stub(trackerPackage, 'default')
       .callsFake(() => new StubbedTracker());
     aggregator.addPeripheral(null);
-    aggregator._responsePools = {};
+    aggregator.rssiPool = {};
   });
   afterEach(() => {
     sinon.restore();

@@ -1,11 +1,11 @@
-import * as Bluebird from 'bluebird';
+import * as Promise from 'bluebird';
 import * as noble from 'noble';
 
-const startScanningAsync = Bluebird.promisify(noble.startScanning);
+const startScanningAsync = Promise.promisify(noble.startScanning);
 
 export default class BeaconScanner {
   private filter: string[];
-  private events: any;
+  private events: { [eventName: string]: Function };
 
   constructor(filter ?: string[]) {
     this.filter = filter;
@@ -14,8 +14,10 @@ export default class BeaconScanner {
     };
   }
 
-  on(eventName: string, callback: Function) {
+  on(eventName: string, callback: Function): this {
     this.events[eventName] = callback;
+
+    return this;
   }
 
   startScan() {
@@ -24,7 +26,7 @@ export default class BeaconScanner {
       .then(() => this.prepareScan());
   }
 
-  private init() {
+  private init(): Promise<void> {
     if (noble.state === 'poweredOn') {
       return Promise.resolve();
     }
@@ -41,7 +43,7 @@ export default class BeaconScanner {
     });
   }
 
-  private prepareScan() {
+  private prepareScan(): Promise<void> {
     // @ts-ignore
     return startScanningAsync([], true)
       .then(() => {

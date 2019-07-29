@@ -1,5 +1,7 @@
 import * as trilateration from 'node-trilateration';
 
+import {PointXY} from './runawayBounds';
+
 import {config} from '../config';
 
 /**
@@ -17,7 +19,7 @@ export function rssiToMeters(rssi: number, referenceRssi, referenceDistance = 1)
  * @param {Object} data BeaconName => rssi
  * @return Object({x: number, y: number})
  */
-export function findCoordinates(beaconConfig, data: any) {
+export function findCoordinates(beaconConfig, data: any): PointXY {
   const beacons = Object.keys(data)
     .map((beaconName: string) => ({
       x: config.accessPoints[beaconName].x,
