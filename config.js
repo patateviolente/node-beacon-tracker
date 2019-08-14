@@ -10,8 +10,8 @@ const config = {
       name: 'Tora_Nut',
       mac: '71:bc:23:4c:72:5b',
       reference: {
-        distance: 5,
-        rssi: { pi1: -72, pi2: -79, pi3: -80 }
+        distance: 1,
+        rssi: { pi1: -66, pi2: -60, pi3: -75}
       },
 
       aggregate: { strategy: 'continuous' },
