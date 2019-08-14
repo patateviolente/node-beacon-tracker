@@ -2,6 +2,7 @@ import * as trilateration from 'node-trilateration';
 
 import { PointXY } from './RunawayBounds';
 
+import { round } from '../utils/strings';
 import { config } from '../config';
 
 /**
@@ -11,7 +12,7 @@ import { config } from '../config';
 export function rssiToMeters(rssi: number, referenceRssi, referenceDistance = 1): number {
   const meters = Math.pow(10, ((referenceRssi - rssi) / 20)) * referenceDistance;
 
-  return Math.round(meters * 100) / 100;
+  return round(meters);
 }
 
 /**
@@ -31,5 +32,11 @@ export function findCoordinates(beaconConfig, data: any): PointXY {
       ),
     }));
 
-  return trilateration.calculate(beacons);
+
+  const coords = trilateration.calculate(beacons);
+
+  return {
+    x: round(coords.x),
+    y: round(coords.y),
+  };
 }
