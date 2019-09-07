@@ -1,8 +1,9 @@
 import * as Promise from 'bluebird';
 import * as sinon from 'sinon';
 import { expect } from 'chai';
+import * as chai from 'chai';
+import * as sinonChai from 'sinon-chai';
 
-import * as trilateration from '../../lib/trilateration';
 import * as utils from '../../utils/strings';
 
 import { config } from '../../config';
@@ -11,6 +12,8 @@ import { EventEmitter } from 'events';
 import Aggregator from '../../controllers/Aggregator';
 
 const beaconMac = utils.standardizeMac('71:bc:23:4c:72:5b');
+
+chai.use(sinonChai);
 
 class StubbedTracker extends EventEmitter {
   newData() {}
@@ -41,7 +44,7 @@ describe('aggregator', () => {
       const aggregateSpy = sinon.spy(aggregator, 'aggregate');
       aggregator.slaveReport('pi1', -50);
       aggregator.slaveReport('pi2', -55);
-      expect(aggregateSpy.callCount).to.equal(0);
+      expect(aggregateSpy).to.not.be.called;
     });
 
     it('should aggregate with all AP responses', async () => {
@@ -49,7 +52,7 @@ describe('aggregator', () => {
       aggregator.slaveReport('pi1', -50);
       aggregator.slaveReport('pi2', -55);
       aggregator.slaveReport('pi3', -60);
-      expect(aggregateStub.callCount).to.equal(1);
+      expect(aggregateStub).to.be.calledOnce;
     });
 
     it('should aggregate after the timeout', async () => {
@@ -59,7 +62,7 @@ describe('aggregator', () => {
       aggregator.slaveReport('pi2', -55);
       await Promise.delay(20);
       config.aggregate.timeout = 1000;
-      expect(aggregateStub.callCount).to.equal(1);
+      expect(aggregateStub).to.be.calledOnce;
     });
   });
 
@@ -74,7 +77,7 @@ describe('aggregator', () => {
       aggregator.slaveReport('pi1', -50);
       aggregator.slaveReport('pi2', -55);
       aggregator.slaveReport('pi3', -52);
-      expect(aggregateStub.callCount).to.equal(0);
+      expect(aggregateStub).to.not.be.called;
     });
 
     it('should aggregate every "interval" with best measures', async () => {
@@ -83,17 +86,17 @@ describe('aggregator', () => {
       aggregator.slaveReport('pi1', -50);
       aggregator.slaveReport('pi2', -55);
       aggregator.slaveReport('pi3', -60);
-      expect(aggregateStub.callCount).to.equal(0);
+      expect(aggregateStub).to.not.be.called;
 
       await Promise.delay(80);
-      expect(aggregateStub.callCount).to.equal(0);
+      expect(aggregateStub).to.not.be.called;
 
       // Improve result
       aggregator.slaveReport('pi1', -45);
       aggregator.slaveReport('pi1', -48);
 
       await Promise.delay(20);
-      expect(aggregateStub.callCount).to.equal(1);
+      expect(aggregateStub).to.be.calledOnce;
 
       expect(aggregator.rssiPool.pi1).to.equal(-45);
       expect(aggregator.rssiPool.pi2).to.equal(-55);
@@ -112,8 +115,8 @@ describe('aggregator', () => {
       aggregator.slaveReport('pi1', -50);
       aggregator.slaveReport('pi2', -55);
       aggregator.slaveReport('pi3', -60);
-      expect(aggregateSpy.callCount).to.equal(1);
-      expect(newDataStub.callCount).to.equal(1);
+      expect(aggregateSpy).to.be.calledOnce;
+      expect(newDataStub).to.be.calledOnce;
       expect(aggregator.rssiPool).to.eql({});
       expect(newDataStub.firstCall.args[0]).to.eql({
         pi1: -50,
@@ -127,8 +130,8 @@ describe('aggregator', () => {
       const newDataStub = sinon.stub(aggregator.tracker, 'newData');
       aggregator.slaveReport('pi1', -50);
       aggregator.aggregate();
-      expect(aggregateSpy.callCount).to.equal(1);
-      expect(newDataStub.callCount).to.equal(1);
+      expect(aggregateSpy).to.be.calledOnce;
+      expect(newDataStub).to.be.calledOnce;
       expect(newDataStub.firstCall.args[0]).to.eql({
         pi1: -50,
       });

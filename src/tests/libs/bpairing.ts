@@ -1,7 +1,12 @@
 import * as sinon from 'sinon';
+import * as chai from 'chai';
 import { expect } from 'chai';
 
+import * as sinonChai from 'sinon-chai';
+
 import BluetoothPairing from '../../lib/BluetoothPairing';
+
+chai.use(sinonChai);
 
 describe('aggregator', () => {
   let peripheralMock;
@@ -22,9 +27,9 @@ describe('aggregator', () => {
     peripheralMock.disconnect = sinon.spy(peripheralMock.disconnect);
     const bpairing = new BluetoothPairing(peripheralMock);
     await bpairing.connect();
-    expect(peripheralMock.connect.callCount).to.equal(1);
+    expect(peripheralMock.connect).to.be.calledOnce;
 
     await bpairing.disconnect();
-    expect(peripheralMock.disconnect.callCount).to.equal(1);
+    expect(peripheralMock.disconnect).to.be.calledOnce;
   });
 });
