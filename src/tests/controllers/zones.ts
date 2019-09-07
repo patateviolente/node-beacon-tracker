@@ -5,7 +5,7 @@ import * as zones from '../../lib/zones';
 
 describe('zones', () => {
   it('should detect non allowed locations', () => {
-    config.runawayBounds = [
+    config.tracker.runawayBounds = [
       [[-20, -10], [-15, -5]],
     ];
     expect(zones.isAllowed(6, 10)).to.be.true;
@@ -14,7 +14,7 @@ describe('zones', () => {
   });
 
   it('should work on a multizone', () => {
-    config.runawayBounds = [
+    config.tracker.runawayBounds = [
       [[1, 1], [2, 2]],
       [[5, 1], [6, 2]],
     ];

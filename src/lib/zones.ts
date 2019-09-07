@@ -3,7 +3,7 @@ import { config } from '../config';
 import { Bound } from './RunawayBounds';
 
 export function isAllowed(xNew: number, yNew: number): boolean {
-  const runawayBounds = config.runawayBounds;
+  const runawayBounds = config.tracker.runawayBounds;
   return runawayBounds.reduce((allowed, runawayBound) => {
     if (!allowed) {
       return false;

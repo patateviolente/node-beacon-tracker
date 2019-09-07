@@ -3,7 +3,6 @@ import { Peripheral } from 'noble';
 
 import * as utils from '../utils/strings';
 import * as logger from '../lib/logger';
-import * as trilateration from '../lib/trilateration';
 
 import Tracker from './Tracker';
 
@@ -15,12 +14,8 @@ const apNames = Object.keys(config.accessPoints);
 type AggregatorIndex = { [mac: string]: Aggregator };
 let aggregates: AggregatorIndex = {};
 
-export enum Strategies {
-  continuous = 'continuous',
-  when_available = 'when_available',
-}
-
 export type TRssiPool = { [apName: string]: number; };
+export type Strategies = 'continuous' | 'when_available';
 
 export type AggregateConfig = {
   timeout: number,
@@ -125,41 +120,9 @@ export default class Aggregator {
       return;
     }
 
-    const { missingAPs } = this.partialPosition(pool);
-    clearTimeout(this.timeout);
     this.rssiPool = {};
-
-    if (missingAPs.length) {
-      return this.tracker.partialData(pool);
-    }
-
-    return this.tracker.newPosition(
-      trilateration.findCoordinates(this.beaconConfig, pool),
-      pool,
-    );
+    clearTimeout(this.timeout);
+    return this.tracker.newData(pool);
   }
 
-  private partialPosition(pool) {
-    const approximateConfig = config.aggregate.approximate;
-    let missingAPs = apNames.reduce((missing, apName) => {
-      if (!pool[apName]) {
-        missing.push(apName);
-      }
-
-      return missing;
-    }, []);
-
-    if (missingAPs.length === 1) {
-      for (const approxConfig of approximateConfig) {
-        if (approxConfig.missing === missingAPs[0]) {
-          logger.log(`Faking ${approxConfig.missing} with ${approxConfig.rssi} - too far`);
-
-          pool[approxConfig.missing] = approxConfig.rssi;
-          missingAPs = [];
-        }
-      }
-    }
-
-    return { missingAPs };
-  }
 }

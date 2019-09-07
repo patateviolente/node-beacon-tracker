@@ -13,9 +13,7 @@ import Aggregator from '../../controllers/Aggregator';
 const beaconMac = utils.standardizeMac('71:bc:23:4c:72:5b');
 
 class StubbedTracker extends EventEmitter {
-  public newPosition() {}
-
-  public partialData() {}
+  newData() {}
 }
 
 describe('aggregator', () => {
@@ -107,39 +105,33 @@ describe('aggregator', () => {
     afterEach(() => sinon.restore());
     beforeEach(() => aggregator.setStrategy('when_available'));
 
-    it('should trilaterate, call back and purge response pool when all AP responded in "when_available" strategy', () => {
+    it('should aggregate once all data in "when_available" and call newData', () => {
       config.aggregate.strategy = 'when_available';
-      const findCoordinateStub = sinon.stub(trilateration, 'findCoordinates')
-        .returns({ x: 10, y: 5 });
       const aggregateSpy = sinon.spy(aggregator, 'aggregate');
-      const newPositionStub = sinon.stub(aggregator.tracker, 'newPosition');
-      const partialDataStub = sinon.stub(aggregator.tracker, 'partialData');
+      const newDataStub = sinon.stub(aggregator.tracker, 'newData');
       aggregator.slaveReport('pi1', -50);
       aggregator.slaveReport('pi2', -55);
       aggregator.slaveReport('pi3', -60);
       expect(aggregateSpy.callCount).to.equal(1);
-      expect(findCoordinateStub.callCount).to.equal(1);
-      expect(newPositionStub.callCount).to.equal(1);
-      expect(partialDataStub.callCount).to.equal(0);
+      expect(newDataStub.callCount).to.equal(1);
       expect(aggregator.rssiPool).to.eql({});
-      expect(findCoordinateStub.firstCall.args[0]).to.include.keys(['mac', 'reference']);
-      expect(findCoordinateStub.firstCall.args[1]).to.have.keys(['pi1', 'pi2', 'pi3']);
-      expect(findCoordinateStub.firstCall.args[1].pi1).to.equal(-50);
-      expect(newPositionStub.firstCall.args[0]).to.eql({ x: 10, y: 5 });
+      expect(newDataStub.firstCall.args[0]).to.eql({
+        pi1: -50,
+        pi2: -55,
+        pi3: -60,
+      });
     });
 
-    it('should call incompleteData callback where AP response are missing', () => {
-      const findCoordinateStub = sinon.stub(trilateration, 'findCoordinates');
+    it('should call newData even with partial data', () => {
       const aggregateSpy = sinon.spy(aggregator, 'aggregate');
-      const newPositionStub = sinon.stub(aggregator.tracker, 'newPosition');
-      const partialDataStub = sinon.stub(aggregator.tracker, 'partialData');
+      const newDataStub = sinon.stub(aggregator.tracker, 'newData');
       aggregator.slaveReport('pi1', -50);
       aggregator.aggregate();
       expect(aggregateSpy.callCount).to.equal(1);
-      expect(findCoordinateStub.callCount).to.equal(0);
-      expect(newPositionStub.callCount).to.equal(0);
-      expect(partialDataStub.callCount).to.equal(1);
-      expect(aggregator.rssiPool).to.eql({});
+      expect(newDataStub.callCount).to.equal(1);
+      expect(newDataStub.firstCall.args[0]).to.eql({
+        pi1: -50,
+      });
     });
   });
 });

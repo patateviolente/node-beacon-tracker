@@ -21,6 +21,12 @@ export type AccessPointConfig = {
   url?: string,
 };
 
+export type TrackerConfig = {
+  mode: 'coordinates' | 'manual',
+  precisionCondition: Function,
+  runawayBounds: Bounds,
+};
+
 export const config: any = {
   port: 5552,
   ble_throttle: 200,
@@ -64,10 +70,13 @@ export const config: any = {
     pi2: { x: 0, y: 0 },
     pi3: { x: 7.5, y: 9 },
   },
-  runawayBounds: <Bounds>[
-    [[-Infinity, -Infinity], [-1, 8]],
-  ],
-  runawayCondition: pool => pool.pi2 > -95 && pool.pi3 > -95,
+  tracker: <TrackerConfig>{
+    mode: 'coordinates',
+    precisionCondition: pool => pool.pi2 > -95 && pool.pi3 > -95,
+    runawayBounds: <Bounds>[
+      [[-Infinity, -Infinity], [-1, 8]],
+    ],
+  },
   dashboard: {
     autosaveInterval: 900 * 1000,
     port: 5553,
