@@ -2,7 +2,7 @@ import { EventEmitter } from 'events';
 
 import * as Promise from 'bluebird';
 
-import { TRssiPool } from './Aggregator';
+import { Pool } from './Aggregator';
 import TrackerAlarm from './TrackerAlarm';
 import Exporter from './Exporter';
 
@@ -24,7 +24,7 @@ export default class Tracker extends EventEmitter {
     this.alarm = new TrackerAlarm(peripheral, beaconConfig);
   }
 
-  newData(pool) {
+  newData(pool: Pool) {
     if (config.tracker.mode === 'coordinates') {
       const { missingAPs } = this.approximatePosition(pool);
 
@@ -41,13 +41,13 @@ export default class Tracker extends EventEmitter {
     }
   }
 
-  private partialData(pool: TRssiPool): Promise<any> {
+  private partialData(pool: Pool): Promise<any> {
     logger.log(`partial position ${JSON.stringify(pool)}`, 2);
 
     return this.exporter.append({ pool });
   }
 
-  private newPosition(coords: PointXY, pool: TRssiPool): Promise<any> {
+  private newPosition(coords: PointXY, pool: Pool): Promise<any> {
     let logInfo = '';
     let distFromZone = this.bounds.distancefromZone(coords);
     console.log('__');
@@ -76,7 +76,7 @@ export default class Tracker extends EventEmitter {
       .then(() => this.exporter.append({ pool, coords, distFromZone, logInfo }));
   }
 
-  private approximatePosition(pool) {
+  private approximatePosition(pool: Pool) {
     const approximateConfig = config.aggregate.approximate;
     const apNames = Object.keys(config.accessPoints);
 

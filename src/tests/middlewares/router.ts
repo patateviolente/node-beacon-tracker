@@ -19,7 +19,7 @@ describe('router', () => {
 
   it('/notify/mac/rssi should be unknown on a slave server', async () => {
     // @ts-ignore
-    role.amIMaster = false;
+    role.role = 'slave';
     const notFoundSpy = sinon.spy(() => {
     });
     router.__set__('notFound', notFoundSpy);
@@ -29,7 +29,7 @@ describe('router', () => {
 
   it('/notify/mac/rssi should report position', async () => {
     // @ts-ignore
-    role.amIMaster = true;
+    role.role = 'master';
     const byMacStub = sinon.stub(aggregator.default, 'byMAC');
     await router.default({ url: '/notify/pi2/11:22:33:aa:bb:cc/-60' });
     sinon.assert.calledOnce(byMacStub);

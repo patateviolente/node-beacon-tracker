@@ -51,7 +51,7 @@ export function scan() {
 
 function informMaster(mac, rssi) {
   const masterUrl = `http://${config.masterIp}:${config.port}/notify/${role.whoami}/${mac}/${rssi}`;
-  logger.log(`Beacon found - call master ${masterUrl}`, role.amIMaster ? logger.LOGLEVEL.EXPERIMENT : logger.LOGLEVEL.VERBOSE);
+  logger.log(`Beacon found - call master ${masterUrl}`, role.role === 'master' ? logger.LOGLEVEL.EXPERIMENT : logger.LOGLEVEL.VERBOSE);
 
   return httpUtils.getURL(masterUrl);
 }

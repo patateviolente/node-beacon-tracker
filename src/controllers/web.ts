@@ -10,10 +10,10 @@ import Exporter, { ExportData } from './Exporter';
 
 import { HttpError } from '../lib/errors';
 
-import * as role from './role';
+import { role } from './role';
 
 export function initServer() {
-  if (!role.amIMaster) {
+  if (role === 'slave') {
     return false;
   }
 

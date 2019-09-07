@@ -14,7 +14,9 @@ const apNames = Object.keys(config.accessPoints);
 type AggregatorIndex = { [mac: string]: Aggregator };
 let aggregates: AggregatorIndex = {};
 
-export type TRssiPool = { [apName: string]: number; };
+export type Pool = {
+  [apName: string]: number;
+};
 export type Strategies = 'continuous' | 'when_available';
 
 export type AggregateConfig = {
@@ -25,13 +27,13 @@ export type AggregateConfig = {
 };
 
 export default class Aggregator {
-  private rssiPool: { [apName: string]: number; };
+  private rssiPool: Pool;
   private timeout: Timeout;
   private interval: Timeout;
-  private beaconConfig: any;
+  private beaconConfig: BeaconConfig;
   private currentStrategy: Strategies;
   private tracker: Tracker;
-  private aggregateConfig: any;
+  private aggregateConfig: AggregateConfig;
 
   constructor(beaconConfig: BeaconConfig) {
     this.beaconConfig = beaconConfig;
@@ -86,14 +88,6 @@ export default class Aggregator {
     return this;
   }
 
-  private resetTimers(): this {
-    clearTimeout(this.timeout);
-    clearInterval(this.interval);
-    this.rssiPool = {};
-
-    return this;
-  }
-
   slaveReport(apName: string, rssi: number) {
     clearTimeout(this.timeout);
 
@@ -123,6 +117,14 @@ export default class Aggregator {
     this.rssiPool = {};
     clearTimeout(this.timeout);
     return this.tracker.newData(pool);
+  }
+
+  private resetTimers(): this {
+    clearTimeout(this.timeout);
+    clearInterval(this.interval);
+    this.rssiPool = {};
+
+    return this;
   }
 
 }

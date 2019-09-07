@@ -2,7 +2,7 @@ import * as Promise from 'bluebird';
 import { Request, Response } from 'express';
 
 import { config } from '../config';
-import * as role from '../controllers/role';
+import { role } from '../controllers/role';
 import * as utils from '../utils/strings';
 import * as logger from '../lib/logger';
 import Aggregator from '../controllers/Aggregator';
@@ -13,7 +13,7 @@ export default function route(req: Request, res: Response): Promise<any> {
   return Promise.try(() => {
     const url = req.url;
     if (url.startsWith('/notify/')) {
-      if (!role.amIMaster) {
+      if (role === 'slave') {
         throw new HttpError(401, 'Not a master, cannot process notify calls');
       }
 
