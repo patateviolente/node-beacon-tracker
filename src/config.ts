@@ -1,7 +1,7 @@
 import * as utils from './utils/strings';
 
-import { Bounds } from './lib/RunawayBounds';
-import { AggregateConfig } from './controllers/Aggregator';
+import { Bounds } from './lib/geo/RunawayBounds';
+import { AggregateConfig } from './controllers/watch/Aggregator';
 
 export type BeaconConfig = {
   name: string,

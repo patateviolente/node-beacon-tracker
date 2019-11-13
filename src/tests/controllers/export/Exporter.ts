@@ -4,11 +4,11 @@ import * as os from 'os';
 import * as Promise from 'bluebird';
 import { expect } from 'chai';
 
-import Exporter from '../../controllers/Exporter';
+import Exporter from '../../../controllers/export/Exporter';
 
-import * as stringUtils from '../../utils/strings';
+import * as stringUtils from '../../../utils/strings';
 
-import { config } from '../../config';
+import { config } from '../../../config';
 
 describe('exporter', () => {
   const tmpdir = os.tmpdir();

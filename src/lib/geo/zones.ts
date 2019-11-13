@@ -1,4 +1,4 @@
-import { config } from '../config';
+import { config } from '../../config';
 
 import { Bound } from './RunawayBounds';
 

@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 
-import { config } from '../../config';
-import * as zones from '../../lib/zones';
+import { config } from '../../../config';
+import * as zones from '../../../lib/geo/zones';
 
 describe('zones', () => {
   it('should detect non allowed locations', () => {

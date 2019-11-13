@@ -4,7 +4,7 @@ import { expect } from 'chai';
 
 import * as sinonChai from 'sinon-chai';
 
-import BluetoothPairing from '../../lib/BluetoothPairing';
+import BluetoothPairing from '../../../lib/bluetooth/BluetoothPairing';
 
 chai.use(sinonChai);
 

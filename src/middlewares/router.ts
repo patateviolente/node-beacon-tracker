@@ -5,7 +5,7 @@ import { config } from '../config';
 import { role } from '../controllers/role';
 import * as utils from '../utils/strings';
 import * as logger from '../lib/logger';
-import Aggregator from '../controllers/Aggregator';
+import Aggregator from '../controllers/watch/Aggregator';
 
 import { HttpError } from '../lib/errors';
 

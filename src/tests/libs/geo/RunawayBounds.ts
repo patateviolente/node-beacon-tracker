@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 
-import RunawayBounds from '../../lib/RunawayBounds';
+import RunawayBounds from '../../../lib/geo/RunawayBounds';
 
 describe('RunawayBounds lib', () => {
   it('should return boolean when inside / outside bounds', () => {

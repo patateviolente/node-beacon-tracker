@@ -3,15 +3,18 @@ import * as http from 'http';
 import * as Promise from 'bluebird';
 import { Request, Response } from 'express';
 
-import { config } from '../config';
-import * as logger from '../lib/logger';
-import * as utils from '../utils/strings';
+import { config } from '../../config';
+import * as logger from '../../lib/logger';
+import * as utils from '../../utils/strings';
 import Exporter, { ExportData } from './Exporter';
 
-import { HttpError } from '../lib/errors';
+import { HttpError } from '../../lib/errors';
 
-import { role } from './role';
+import { role } from '../role';
 
+/**
+ * Initiate log history server
+ */
 export function initServer() {
   if (role === 'slave') {
     return false;

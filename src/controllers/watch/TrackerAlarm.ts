@@ -1,16 +1,20 @@
 import * as Promise from 'bluebird';
 import { Peripheral } from 'noble';
 
-import BluetoothPairing from '../lib/BluetoothPairing';
-import { scan } from './bluetoothListener';
+import BluetoothPairing from '../../lib/bluetooth/BluetoothPairing';
+import { scan } from '../listen/bluetoothListener';
 
-import * as logger from '../lib/logger';
+import * as logger from '../../lib/logger';
 
-import { BeaconConfig } from '../config';
+import { BeaconConfig } from '../../config';
 
 const maxBeepDuration = 10;
 const minBeepDuration = 5;
 
+/**
+ * Handle device Alarm BLE connection
+ * Aggregator -> Tracker -> TrackerAlarm
+ */
 export default class TrackerAlarm {
   private peripheral: Peripheral;
   private beaconConfig: BeaconConfig;

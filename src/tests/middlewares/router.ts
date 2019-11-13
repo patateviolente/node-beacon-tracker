@@ -4,7 +4,7 @@ import { expect } from 'chai';
 import * as chai from 'chai';
 import * as sinonChai from 'sinon-chai';
 
-import * as aggregator from '../../controllers/Aggregator';
+import * as aggregator from '../../controllers/watch/Aggregator';
 
 import * as role from '../../controllers/role';
 

@@ -2,10 +2,10 @@ import * as http from 'http';
 
 import router from './middlewares/router';
 
-import * as bluetoothListener from './controllers/bluetoothListener';
+import * as bluetoothListener from './controllers/listen/bluetoothListener';
 import * as roles from './controllers/role';
-import * as web from './controllers/web';
-import Aggregator from './controllers/Aggregator';
+import * as web from './controllers/export/web';
+import Aggregator from './controllers/watch/Aggregator';
 
 import * as logger from './lib/logger';
 

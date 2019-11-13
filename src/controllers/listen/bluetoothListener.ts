@@ -1,16 +1,16 @@
 import * as Promise from 'bluebird';
 import { Peripheral } from 'noble';
 
-import Aggregator from './Aggregator';
+import Aggregator from '../watch/Aggregator';
 
-import BeaconScanner from '../lib/BeaconScanner';
-import * as logger from '../lib/logger';
+import BeaconScanner from '../../lib/bluetooth/BeaconScanner';
+import * as logger from '../../lib/logger';
 
-import * as httpUtils from '../utils/http';
-import * as stringUtils from '../utils/strings';
+import * as httpUtils from '../../utils/http';
+import * as stringUtils from '../../utils/strings';
 
-import * as role from './role';
-import { config } from '../config';
+import * as role from '../role';
+import { config } from '../../config';
 
 const scanner: BeaconScanner = new BeaconScanner();
 

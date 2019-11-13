@@ -1,4 +1,4 @@
-import { round } from '../utils/strings';
+import { round } from '../../utils/strings';
 
 export type Point = [number, number];
 export type Segment = [Point, Point];

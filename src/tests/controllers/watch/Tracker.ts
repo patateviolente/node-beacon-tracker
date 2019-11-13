@@ -4,11 +4,11 @@ import { expect } from 'chai';
 import * as sinon from 'sinon';
 import * as _ from 'lodash';
 
-import * as stringUtils from '../../utils/strings';
+import * as stringUtils from '../../../utils/strings';
 
-import Tracker from '../../controllers/Tracker';
+import Tracker from '../../../controllers/watch/Tracker';
 
-import { config } from '../../config';
+import { config } from '../../../config';
 
 describe('tracker', () => {
   const currentYYYYMMDD = stringUtils.dateToYYYYMMDD(new Date());

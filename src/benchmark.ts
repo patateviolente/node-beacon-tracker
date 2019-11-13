@@ -5,7 +5,7 @@ import * as http from 'http';
 import * as utils from './utils/strings';
 import * as httpUtils from './utils/http';
 
-import BeaconScanner from './lib/BeaconScanner';
+import BeaconScanner from './lib/bluetooth/BeaconScanner';
 
 import * as role from './controllers/role';
 

@@ -2,8 +2,8 @@ import * as trilateration from 'node-trilateration';
 
 import { PointXY } from './RunawayBounds';
 
-import { round } from '../utils/strings';
-import { config } from '../config';
+import { round } from '../../utils/strings';
+import { config } from '../../config';
 
 /**
  * Distance = 10 ^ ((Measured Power – RSSI)/(10 * N))

@@ -4,12 +4,12 @@ import { expect } from 'chai';
 import * as chai from 'chai';
 import * as sinonChai from 'sinon-chai';
 
-import * as utils from '../../utils/strings';
+import * as utils from '../../../utils/strings';
 
-import { config } from '../../config';
-import * as trackerPackage from '../../controllers/Tracker';
+import { config } from '../../../config';
+import * as trackerPackage from '../../../controllers/watch/Tracker';
 import { EventEmitter } from 'events';
-import Aggregator from '../../controllers/Aggregator';
+import Aggregator from '../../../controllers/watch/Aggregator';
 
 const beaconMac = utils.standardizeMac('71:bc:23:4c:72:5b');
 

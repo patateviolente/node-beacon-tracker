@@ -1,12 +1,12 @@
 import * as Promise from 'bluebird';
 import { Peripheral } from 'noble';
 
-import * as utils from '../utils/strings';
-import * as logger from '../lib/logger';
+import * as utils from '../../utils/strings';
+import * as logger from '../../lib/logger';
 
 import Tracker from './Tracker';
 
-import { BeaconConfig, config } from '../config';
+import { BeaconConfig, config } from '../../config';
 import Timeout = NodeJS.Timeout;
 
 const apNames = Object.keys(config.accessPoints);
@@ -26,6 +26,11 @@ export type AggregateConfig = {
   approximate: { missing: string, rssi: number }[],
 };
 
+/**
+ * Aggregate signals for one bluetooth beacon device.
+ * Handle signal gathering strategy, and call Tracker instance.
+ * Aggregator -> Tracker -> TrackerAlarm
+ */
 export default class Aggregator {
   private rssiPool: Pool;
   private timeout: Timeout;

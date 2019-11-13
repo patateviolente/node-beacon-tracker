@@ -4,10 +4,10 @@ import * as path from 'path';
 
 import * as Promise from 'bluebird';
 
-import * as logger from '../lib/logger';
-import { config } from '../config';
+import * as logger from '../../lib/logger';
+import { config } from '../../config';
 
-import * as stringUtils from '../utils/strings';
+import * as stringUtils from '../../utils/strings';
 
 const readFileAsync = Promise.promisify(fs.readFile);
 const writeFileAsync = Promise.promisify(fs.writeFile);
@@ -15,6 +15,9 @@ const writeFileAsync = Promise.promisify(fs.writeFile);
 type ExportRow = any;
 export type ExportData = ExportRow[];
 
+/**
+ * Manage logs for one Tracker device
+ */
 export default class Exporter {
   private mac: string;
   private base: string;

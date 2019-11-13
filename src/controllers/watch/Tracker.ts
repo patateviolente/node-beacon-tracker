@@ -4,13 +4,18 @@ import * as Promise from 'bluebird';
 
 import { Pool } from './Aggregator';
 import TrackerAlarm from './TrackerAlarm';
-import Exporter from './Exporter';
+import Exporter from '../export/Exporter';
 
-import * as logger from '../lib/logger';
-import RunawayBounds, { PointXY } from '../lib/RunawayBounds';
-import { BeaconConfig, config } from '../config';
-import * as trilateration from '../lib/trilateration';
+import * as logger from '../../lib/logger';
+import RunawayBounds, { PointXY } from '../../lib/geo/RunawayBounds';
+import { BeaconConfig, config } from '../../config';
+import * as trilateration from '../../lib/geo/trilateration';
 
+/**
+ * A tracker is instantiated for each tracker device.
+ * Handle new data, find position, and trigger TrackerAlarm.
+ * Aggregator -> Tracker -> TrackerAlarm
+ */
 export default class Tracker extends EventEmitter {
   public exporter: Exporter;
   private bounds: RunawayBounds;
@@ -50,7 +55,6 @@ export default class Tracker extends EventEmitter {
   private newPosition(coords: PointXY, pool: Pool): Promise<any> {
     let logInfo = '';
     let distFromZone = this.bounds.distancefromZone(coords);
-    console.log('__');
 
     if (distFromZone < 0 && !config.tracker.precisionCondition(pool)) {
       logInfo = 'imprecise';

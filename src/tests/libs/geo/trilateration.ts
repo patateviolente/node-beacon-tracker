@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 
-import { config } from '../../config';
-import * as trilateration from '../../lib/trilateration';
+import { config } from '../../../config';
+import * as trilateration from '../../../lib/geo/trilateration';
 
 describe('Trilateration lib', () => {
   const originalAPConfig = config.accessPoints;
