@@ -5,7 +5,6 @@ const expect = require('chai').expect;
 
 const trilateration = require('../../lib/trilateration');
 const utils = require('../../lib/utils');
-const Bpairing = require('../../lib/bpairing');
 const Aggregator = proxyquire('../../src/aggregator', {
   './tracker': function() {
     this.on = function() {}
@@ -18,12 +17,20 @@ const beaconMac = utils.standardizeMac('71:bc:23:4c:72:5b');
 
 describe('aggregator', () => {
   let aggregator;
+  const accessPoints = {
+    pi1: { master: true, url: 'pimaster', x: 0.5, y: 8 },
+    pi2: { x: 7.5, y: 9 },
+    pi3: { x: 0, y: 0 },
+  };
+
   before(() => {
+    sinon.stub(config, 'accessPoints').value(accessPoints);
     Aggregator.instantiateAll();
     aggregator = Aggregator.byMAC(beaconMac);
   });
 
   beforeEach(() => {
+    sinon.stub(config, 'accessPoints').value(accessPoints);
     aggregator.addPeripheral(null);
     aggregator._responsePools = {};
   });

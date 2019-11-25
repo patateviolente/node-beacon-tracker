@@ -5,12 +5,12 @@ const trilateration = require('../lib/trilateration');
 const Tracker = require('./tracker');
 
 const config = require('../config');
-const apNames = Object.keys(config.accessPoints);
 
 let aggregates = {};
 
 class BeaconAggregator {
   constructor(beaconConfig) {
+    this.beaconConfig = beaconConfig;
     this.beaconConfig = beaconConfig;
     this._responsePools = {};
     this._timeout = null;
@@ -18,6 +18,7 @@ class BeaconAggregator {
     this._strategy = config.aggregate.strategy;
     this._tracker = null;
     this.aggregateConfig = Object.assign({}, config.aggregate, beaconConfig.aggregate || {});
+    this.apNames = Object.keys(config.accessPoints);
 
     this.setStrategy();
   }
@@ -84,7 +85,7 @@ class BeaconAggregator {
       pool[apName].rssi = rssi;
     }
 
-    if (this._strategy === 'when_available' && apNames.length === Object.keys(pool).length) {
+    if (this._strategy === 'when_available' && this.apNames.length === Object.keys(pool).length) {
       this.aggregate();
     }
   }
@@ -98,7 +99,7 @@ class BeaconAggregator {
       return;
     }
 
-    const missingAPs = apNames.reduce((missing, apName) => {
+    const missingAPs = this.apNames.reduce((missing, apName) => {
       if (!pool[apName]) {
         missing.push(apName);
       }

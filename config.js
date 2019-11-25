@@ -40,6 +40,7 @@ const config = {
     },
     pi2: { x: 7.5, y: 9 },
     pi3: { x: 0, y: 0 },
+    pi4: { x: 4, y: 8 },
   },
   runawayBounds: [
     [[-Infinity, -Infinity], [-1, 8]],
