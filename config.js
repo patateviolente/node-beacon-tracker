@@ -11,7 +11,7 @@ const config = {
       mac: '71:bc:23:4c:72:5b',
       reference: {
         distance: 1,
-        rssi: { pi1: -54, pi2: -63, pi3: -64 }
+        rssi: { pi1: -66, pi2: -60, pi3: -75}
       },
 
       aggregate: { strategy: 'continuous' },
@@ -25,11 +25,15 @@ const config = {
   ],
   // Default aggregate values for beacons
   aggregate: {
-    timeout: 12000, // Maximum time we wait all ap measures in 'when_available' strategy
-    interval: 6500, // Time between each position event in 'continuous' strategy
+    timeout: 15000, // Maximum time we wait all ap measures in 'when_available' strategy
+    interval: 12000, // Time between each position event in 'continuous' strategy
     // 'when_available'  will process position when all ap has responded
     // 'continuous'      will process position every 'interval' time
-    strategy: 'continuous'
+    strategy: 'continuous',
+    // Will set a value when one AP is missing
+    approximate: [
+      { missing: 'pi3', rssi: -92 },
+    ]
   },
   accessPoints: {
     pi1: {
@@ -38,24 +42,18 @@ const config = {
       x: 0.5,
       y: 8
     },
-    pi2: { x: 7.5, y: 9 },
-    pi3: { x: 0, y: 0 },
+    pi2: { x: 0, y: 0 },
+    pi3: { x: 7.5, y: 9 },
     pi4: { x: 4, y: 8 },
   },
   runawayBounds: [
     [[-Infinity, -Infinity], [-1, 8]],
-    [[9, -Infinity], [Infinity, 8]]
   ],
+  runawayCondition: pool => pool.pi2 > -95 && pool.pi3 > -95,
   dashboard: {
-    enable: true,
+    autosaveInterval: 900 * 1000,
     port: 5553,
-    map: {
-      src: 'img/maps/map.jpg',
-      xi: -22,
-      xf: 45.5,
-      yi: -6,
-      yf: 29.3,
-    }
+    base: '/home/pi/tracking/'
   }
 };
 

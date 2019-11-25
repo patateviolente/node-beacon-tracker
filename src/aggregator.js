@@ -11,7 +11,6 @@ let aggregates = {};
 class BeaconAggregator {
   constructor(beaconConfig) {
     this.beaconConfig = beaconConfig;
-    this.beaconConfig = beaconConfig;
     this._responsePools = {};
     this._timeout = null;
     this._continuousInterval = null;
@@ -79,10 +78,8 @@ class BeaconAggregator {
     }
 
     // Save the signal / update with best signal
-    if (!pool[apName]) {
-      pool[apName] = { rssi, date: new Date() };
-    } else if (rssi > pool[apName].rssi) {
-      pool[apName].rssi = rssi;
+    if (!pool[apName] || rssi > pool[apName]) {
+      pool[apName] = rssi;
     }
 
     if (this._strategy === 'when_available' && this.apNames.length === Object.keys(pool).length) {
@@ -99,7 +96,22 @@ class BeaconAggregator {
       return;
     }
 
-    const missingAPs = this.apNames.reduce((missing, apName) => {
+    const { missingAPs } = this._partialPosition(pool);
+    clearTimeout(this._timeout);
+    this._responsePools = {};
+
+    if (missingAPs.length) {
+      return this._tracker.partialData(pool);
+    }
+
+    const coords = trilateration.findCoordinates(this.beaconConfig, pool);
+
+    return this._tracker.newPosition(coords, pool);
+  }
+
+  _partialPosition(pool) {
+    const approximateConfig = config.aggregate.approximate;
+    let missingAPs = this.apNames.reduce((missing, apName) => {
       if (!pool[apName]) {
         missing.push(apName);
       }
@@ -107,16 +119,18 @@ class BeaconAggregator {
       return missing;
     }, []);
 
-    clearTimeout(this._timeout);
-    this._responsePools = {};
+    if (missingAPs.length === 1) {
+      for (const approxConfig of approximateConfig) {
+        if (approxConfig.missing === missingAPs[0]) {
+          logger.log(`Faking ${approxConfig.missing} with ${approxConfig.rssi} - too far`);
 
-    if (missingAPs.length) {
-      return this._tracker.partialData(missingAPs, pool);
+          pool[approxConfig.missing] = approxConfig.rssi;
+          missingAPs = [];
+        }
+      }
     }
 
-    const coords = trilateration.findCoordinates(this.beaconConfig, pool);
-
-    return this._tracker.newPosition(coords);
+    return { missingAPs }
   }
 }
 

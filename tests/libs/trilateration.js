@@ -123,11 +123,7 @@ describe('Trilateration lib', () => {
         distance: 1,
         rssi: { ap1: -40, ap2: -42, ap3: -39 }
       }
-    }, {
-      ap1: { rssi: -40 },
-      ap2: { rssi: -42 },
-      ap3: { rssi: -39 }
-    });
+    }, { ap1: -40, ap2: -42, ap3: -39 });
     expect(coords).to.eql({ x: 3, y: 2 })
   });
 });
