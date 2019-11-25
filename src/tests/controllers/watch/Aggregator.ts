@@ -21,12 +21,25 @@ class StubbedTracker extends EventEmitter {
 
 describe('aggregator', () => {
   let aggregator;
+  const accessPoints = {
+    pi1: {
+      master: true,
+      url: 'pimaster',
+      x: 0.5,
+      y: 8,
+    },
+    pi2: { x: 0, y: 0 },
+    pi3: { x: 7.5, y: 9 },
+  };
+
   before(() => {
+    sinon.stub(config, 'accessPoints').value(accessPoints);
     Aggregator.instantiateAll();
     aggregator = Aggregator.byMAC(beaconMac);
   });
 
   beforeEach(() => {
+    sinon.stub(config, 'accessPoints').value(accessPoints);
     sinon.stub(trackerPackage, 'default')
       .callsFake(() => new StubbedTracker());
     aggregator.addPeripheral(null);

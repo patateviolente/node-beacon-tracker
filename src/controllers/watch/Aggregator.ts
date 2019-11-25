@@ -9,8 +9,6 @@ import Tracker from './Tracker';
 import { BeaconConfig, config } from '../../config';
 import Timeout = NodeJS.Timeout;
 
-const apNames = Object.keys(config.accessPoints);
-
 type AggregatorIndex = { [mac: string]: Aggregator };
 let aggregates: AggregatorIndex = {};
 
@@ -39,6 +37,7 @@ export default class Aggregator {
   private currentStrategy: Strategies;
   private tracker: Tracker;
   private aggregateConfig: AggregateConfig;
+  private readonly apNames: string[];
 
   constructor(beaconConfig: BeaconConfig) {
     this.beaconConfig = beaconConfig;
@@ -46,6 +45,7 @@ export default class Aggregator {
     this.currentStrategy = config.aggregate.strategy;
     this.tracker = null;
     this.aggregateConfig = Object.assign({}, config.aggregate, beaconConfig.aggregate || {});
+    this.apNames = Object.keys(config.accessPoints);
 
     this.setStrategy();
   }
@@ -104,7 +104,7 @@ export default class Aggregator {
     if (this.currentStrategy === 'when_available') {
       this.timeout = setTimeout(() => this.aggregate(), config.aggregate.timeout);
 
-      if (apNames.length === Object.keys(this.rssiPool).length) {
+      if (this.apNames.length === Object.keys(this.rssiPool).length) {
         return this.aggregate();
       }
     }

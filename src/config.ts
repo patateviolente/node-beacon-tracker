@@ -69,6 +69,7 @@ export const config: any = {
     },
     pi2: { x: 0, y: 0 },
     pi3: { x: 7.5, y: 9 },
+    pi4: { x: 4, y: 8 },
   },
   tracker: <TrackerConfig>{
     mode: 'coordinates',
