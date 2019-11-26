@@ -131,5 +131,4 @@ export default class Aggregator {
 
     return this;
   }
-
 }
